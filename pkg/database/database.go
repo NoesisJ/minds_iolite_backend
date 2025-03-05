@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/NoesisJ/minds_iolite/backend/pkg/config"
+	"github.com/NoesisJ/minds_iolite_backend/pkg/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

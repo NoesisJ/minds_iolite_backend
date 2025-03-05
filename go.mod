@@ -1,10 +1,9 @@
-module github.com/NoesisJ/minds_iolite/backend
+module github.com/NoesisJ/minds_iolite_backend
 
 go 1.21
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.8.3
 	gorm.io/driver/mysql v1.5.4
 	gorm.io/gorm v1.25.12

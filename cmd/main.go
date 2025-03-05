@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/NoesisJ/minds_iolite/backend/pkg/config"
-	"github.com/NoesisJ/minds_iolite/backend/pkg/database"
-	"github.com/NoesisJ/minds_iolite/backend/pkg/models"
+	"github.com/NoesisJ/minds_iolite_backend/pkg/config"
+	"github.com/NoesisJ/minds_iolite_backend/pkg/database"
+	"github.com/NoesisJ/minds_iolite_backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
 )
