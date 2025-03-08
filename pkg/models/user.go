@@ -10,5 +10,6 @@ type User struct {
 }
 
 func AutoMigrate(db *gorm.DB) error {
-	return db.AutoMigrate(&User{}, &Data{}) // 仅执行结构迁移，不会删除数据
+	// 由于Data表已存在且有id列，我们只迁移User模型
+	return db.AutoMigrate(&User{}) // 仅执行结构迁移，不会删除数据
 }

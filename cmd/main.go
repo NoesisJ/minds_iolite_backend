@@ -6,6 +6,7 @@ import (
 
 	"github.com/NoesisJ/minds_iolite_backend/pkg/config"
 	"github.com/NoesisJ/minds_iolite_backend/pkg/database"
+	"github.com/NoesisJ/minds_iolite_backend/pkg/handlers"
 	"github.com/NoesisJ/minds_iolite_backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
@@ -32,12 +33,15 @@ func main() {
 	// 初始化Gin
 	r := gin.Default()
 
-	// 添加路由
+	// 添加健康检查路由
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status": "ok",
 		})
 	})
+
+	// 设置API路由
+	handlers.SetupRoutes(r)
 
 	// 启动服务
 	fmt.Println("Server running on :8080")
