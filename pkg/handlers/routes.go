@@ -14,6 +14,9 @@ func SetupRoutes(r *gin.Engine) {
 
 	// 数据相关路由
 	api.GET("/data", GetAllData)
+	
+	// 财务相关路由
+	api.GET("/financial", GetAllFinancial)
 }
 
 // CORSMiddleware 处理跨域请求的中间件

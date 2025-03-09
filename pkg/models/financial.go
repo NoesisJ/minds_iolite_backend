@@ -5,7 +5,7 @@ import (
 )
 
 type Financial struct {
-	ID              uint   `gorm:"primaryKey;autoIncrement:true;column:id"`
+	ID              uint   `gorm:"primaryKey;autoIncrement:false;column:id"` // 明确指定不自动增长
 	Name            string `gorm:"column:name"`
 	Model           string `gorm:"column:model"`
 	Quantity        string `gorm:"column:quantity"`
