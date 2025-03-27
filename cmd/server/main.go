@@ -9,6 +9,7 @@ import (
 
 	"minds_iolite_backend/config"
 	"minds_iolite_backend/internal/database"
+	"minds_iolite_backend/internal/routes"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,11 +41,21 @@ func main() {
 	// 确保在程序结束时关闭MongoDB连接
 	defer mongoDB.Close()
 
-	// 创建Gin路由引擎
+	// 在创建router之前添加
+	gin.SetMode(gin.DebugMode)
 	router := gin.Default()
 
-	// 设置API路由 - 这部分会在后续实现
-	// routes.SetupRoutes(router, mongoDB)
+	// 设置API路由
+	if err := routes.SetupRoutes(router, mongoDB); err != nil {
+		log.Fatalf("设置路由失败: %v", err)
+	}
+
+	// 替代方案 - 直接在main.go中添加简单路由
+	router.GET("/metadata/models-test", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "路由测试成功",
+		})
+	})
 
 	// 启动HTTP服务器
 	go func() {
