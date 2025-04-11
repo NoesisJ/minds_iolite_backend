@@ -1,0 +1,11 @@
+id,name,email,age,city,is_active,registration_date,credit_score
+1,张三,zhangsan@example.com,35,北京,true,2022-01-15,720
+2,李四,lisi@example.com,42,上海,true,2021-05-23,680
+3,王五,wangwu@example.com,28,广州,false,2022-07-10,750
+4,赵六,zhaoliu@example.com,37,深圳,true,2020-11-05,690
+5,钱七,qianqi@example.com,31,杭州,true,2023-02-18,710
+6,孙八,sunba@example.com,45,南京,false,2021-09-30,630
+7,周九,zhoujiu@example.com,29,武汉,true,2022-04-12,770
+8,吴十,wushi@example.com,33,成都,true,2022-12-01,700
+9,郑十一,zheng11@example.com,40,重庆,false,2021-03-25,650
+10,王十二,wang12@example.com,27,西安,true,2023-01-08,730 

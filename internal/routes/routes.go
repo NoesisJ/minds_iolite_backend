@@ -25,5 +25,9 @@ func SetupRoutes(router *gin.Engine, db *database.MongoDB) error {
 	}
 	fmt.Println("动态API路由设置完成")
 
+	// 设置数据源路由
+	SetupDataSourceRoutes(router)
+	fmt.Println("数据源路由设置完成")
+
 	return nil
 }
