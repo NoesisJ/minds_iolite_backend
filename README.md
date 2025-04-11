@@ -541,4 +541,117 @@ curl -X POST http://localhost:8080/api/datasource/mysql/connect \
 3. **权限管理**：
    - 验证用户拥有足够的数据库权限
    - 建议使用最小权限原则配置的账户
-   - 提供连接授权验证机制 
+   - 提供连接授权验证机制
+
+### SQLite数据源
+
+Minds Iolite Backend现在支持SQLite数据源，可以处理.db、.sqlite和.sqlite3格式的SQLite数据库文件，并支持将其导入到MongoDB中。
+
+#### API设计
+
+##### 1. 处理SQLite文件
+```
+POST /api/datasource/sqlite/process
+Content-Type: application/json
+
+{
+  "filePath": "E:/path/to/your/database.db",
+  "table": "users"  // 可选，指定要查看的表，不提供则返回所有表信息
+}
+```
+
+##### 返回格式
+```json
+{
+  "success": true,
+  "data": {
+    "filePath": "E:/path/to/your/database.db",
+    "tables": {
+      "users": {
+        "fields": {
+          "id": "int",
+          "name": "str",
+          "email": "str",
+          "created_at": "date"
+        },
+        "sample_data": "{\"id\": 1, \"name\": \"张三\", \"email\": \"zhangsan@example.com\", \"created_at\": \"2024-03-26T10:30:00Z\"}"
+      }
+    }
+  }
+}
+```
+
+##### 2. 导入SQLite数据到MongoDB
+```
+POST /api/datasource/sqlite/import-to-mongo
+Content-Type: application/json
+
+{
+  "filePath": "E:/path/to/your/database.db",
+  "table": "users",                      // 要导入的SQLite表名
+  "mongoUri": "mongodb://localhost:27017", // 可选，MongoDB连接URI
+  "dbName": "sqlite_database",           // 可选，MongoDB数据库名
+  "collName": "users"                    // 可选，MongoDB集合名
+}
+```
+
+##### 返回格式
+```json
+{
+  "success": true,
+  "connectionInfo": {
+    "host": "localhost",
+    "port": 27017,
+    "username": "",
+    "password": "",
+    "database": "sqlite_database",
+    "collections": {
+      "users": {
+        "fields": {
+          "_id": "ObjectId",
+          "id": "int",
+          "name": "str",
+          "email": "str",
+          "created_at": "date"
+        },
+        "sample_data": "{\"_id\":\"67f7c9e79f2d90b8bcdfa47c\",\"id\":1,\"name\":\"张三\",\"email\":\"zhangsan@example.com\",\"created_at\":\"2024-03-26T10:30:00Z\"}"
+      }
+    }
+  },
+  "message": "SQLite数据已成功导入到MongoDB"
+}
+```
+
+### 使用示例
+
+#### 处理SQLite文件:
+```bash
+curl -X POST http://localhost:8080/api/datasource/sqlite/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filePath": "E:/data/example.db",
+    "table": "customers"
+  }'
+```
+
+#### 导入SQLite数据到MongoDB:
+```bash
+curl -X POST http://localhost:8080/api/datasource/sqlite/import-to-mongo \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filePath": "E:/data/example.db",
+    "table": "customers",
+    "dbName": "my_database",
+    "collName": "customers_collection"
+  }'
+```
+
+#### 注意事项:
+1. 后端服务需安装SQLite驱动（github.com/mattn/go-sqlite3）
+2. 对于大型SQLite数据库，导入过程可能需要较长时间
+3. 支持的SQLite文件格式：.db、.sqlite和.sqlite3
+4. 可选参数说明：
+   - `table`: 指定要处理的表名，不提供则处理所有表
+   - `dbName`: MongoDB数据库名，默认为"sqlite_文件名"
+   - `collName`: MongoDB集合名，默认为与表名相同
+   - `mongoUri`: MongoDB连接URI，默认为"mongodb://localhost:27017" 

@@ -5,6 +5,7 @@ import (
 
 	"minds_iolite_backend/internal/datasource/providers/csv"
 	"minds_iolite_backend/internal/datasource/providers/mongodb"
+	"minds_iolite_backend/internal/datasource/providers/sqlite"
 	"minds_iolite_backend/internal/models/datasource"
 	"minds_iolite_backend/internal/services/datastorage"
 
@@ -321,13 +322,14 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 // ConnectToMongoDB 处理MongoDB连接请求
 func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
 	var request struct {
-		ConnectionURI string `json:"connectionUri"`
-		Database      string `json:"database" binding:"required"`
+		ConnectionURI string `json:"ConnectionURI"`
+		Database      string `json:"Database" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "无效的请求参数: " + err.Error(),
+			"success": false,
+			"error":   "无效的请求参数: " + err.Error(),
 		})
 		return
 	}
@@ -342,7 +344,8 @@ func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
 	connector, err := mongodb.NewMongoDBConnector(uri)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "连接MongoDB失败: " + err.Error(),
+			"success": false,
+			"error":   "连接MongoDB失败: " + err.Error(),
 		})
 		return
 	}
@@ -352,13 +355,17 @@ func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
 	connInfo, err := connector.ExtractConnectionInfo(request.Database)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "获取数据库信息失败: " + err.Error(),
+			"success": false,
+			"error":   "获取数据库信息失败: " + err.Error(),
 		})
 		return
 	}
 
-	// 直接返回连接信息
-	c.JSON(http.StatusOK, connInfo)
+	// 返回连接信息
+	c.JSON(http.StatusOK, gin.H{
+		"success":        true,
+		"connectionInfo": connInfo,
+	})
 }
 
 // ConnectToMySQL 处理MySQL连接请求
@@ -411,5 +418,139 @@ func (h *DataSourceHandler) ConnectToMySQL(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success":        true,
 		"connectionInfo": connInfo,
+	})
+}
+
+// ProcessSQLiteFile 处理本地SQLite文件
+func (h *DataSourceHandler) ProcessSQLiteFile(c *gin.Context) {
+	var request struct {
+		FilePath string `json:"filePath" binding:"required"`
+		Table    string `json:"table"` // 可选，指定要处理的表
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "无效的请求参数: " + err.Error(),
+		})
+		return
+	}
+
+	// 创建SQLite数据源
+	sqliteSource := datasource.NewSQLiteSource(request.FilePath)
+
+	// 验证数据源
+	if err := sqliteSource.Validate(); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "数据源验证失败: " + err.Error(),
+		})
+		return
+	}
+
+	// 创建SQLite连接器
+	connector, err := sqlite.NewSQLiteConnector(request.FilePath)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "连接SQLite数据库失败: " + err.Error(),
+		})
+		return
+	}
+	defer connector.Close()
+
+	// 获取表结构信息
+	var connInfo *datastorage.SQLiteConnectionInfo
+	if request.Table != "" {
+		// 获取指定表的信息
+		connInfo, err = connector.ExtractTableConnectionInfo(request.Table)
+	} else {
+		// 获取所有表的信息
+		connInfo, err = connector.ExtractConnectionInfo()
+	}
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "获取数据库信息失败: " + err.Error(),
+		})
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    connInfo,
+	})
+}
+
+// ImportSQLiteToMongoDB 将SQLite数据导入MongoDB
+func (h *DataSourceHandler) ImportSQLiteToMongoDB(c *gin.Context) {
+	var request struct {
+		FilePath       string `json:"filePath" binding:"required"` // SQLite文件路径
+		Table          string `json:"table" binding:"required"`    // 要导入的表名
+		MongoURI       string `json:"mongoUri"`                    // MongoDB连接URI
+		DatabaseName   string `json:"dbName"`                      // MongoDB数据库名
+		CollectionName string `json:"collName"`                    // MongoDB集合名
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "无效的请求参数: " + err.Error(),
+		})
+		return
+	}
+
+	// 创建SQLite数据源
+	sqliteSource := datasource.NewSQLiteSource(request.FilePath)
+	sqliteSource.Table = request.Table
+
+	// 验证数据源
+	if err := sqliteSource.Validate(); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "数据源验证失败: " + err.Error(),
+		})
+		return
+	}
+
+	// 创建SQLite存储服务
+	storage, err := datastorage.NewSQLiteStorage(request.FilePath)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "连接SQLite数据库失败: " + err.Error(),
+		})
+		return
+	}
+	defer storage.Close()
+
+	// 设置默认MongoDB连接URI
+	mongoURI := request.MongoURI
+	if mongoURI == "" {
+		mongoURI = "mongodb://localhost:27017"
+	}
+
+	// 导入数据到MongoDB
+	connInfo, err := storage.ImportSQLiteToMongoDB(
+		request.Table,
+		request.DatabaseName,
+		request.CollectionName,
+		mongoURI,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "导入数据到MongoDB失败: " + err.Error(),
+		})
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, gin.H{
+		"success":        true,
+		"connectionInfo": connInfo,
+		"message":        "SQLite数据已成功导入到MongoDB",
 	})
 }

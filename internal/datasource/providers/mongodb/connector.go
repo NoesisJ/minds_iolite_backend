@@ -6,13 +6,27 @@ import (
 	"fmt"
 	"time"
 
-	"minds_iolite_backend/internal/services/datastorage"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+// MongoDBConnectionInfo 表示MongoDB连接信息
+type MongoDBConnectionInfo struct {
+	Host        string                           `json:"host"`
+	Port        int                              `json:"port"`
+	Username    string                           `json:"username"`
+	Password    string                           `json:"password,omitempty"`
+	Database    string                           `json:"database"`
+	Collections map[string]CollectionInformation `json:"collections"`
+}
+
+// CollectionInformation 表示集合信息
+type CollectionInformation struct {
+	Fields     map[string]string `json:"fields"`
+	SampleData string            `json:"sample_data"`
+}
 
 // MongoDBConnector MongoDB连接器
 type MongoDBConnector struct {
@@ -54,7 +68,7 @@ func (c *MongoDBConnector) Close() error {
 }
 
 // ExtractConnectionInfo 提取数据库连接信息
-func (c *MongoDBConnector) ExtractConnectionInfo(dbName string) (*datastorage.MongoDBConnectionInfo, error) {
+func (c *MongoDBConnector) ExtractConnectionInfo(dbName string) (*MongoDBConnectionInfo, error) {
 	// 创建上下文
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -63,13 +77,13 @@ func (c *MongoDBConnector) ExtractConnectionInfo(dbName string) (*datastorage.Mo
 	db := c.client.Database(dbName)
 
 	// 创建连接信息
-	connInfo := &datastorage.MongoDBConnectionInfo{
+	connInfo := &MongoDBConnectionInfo{
 		Host:        "localhost", // 假设是本地MongoDB
 		Port:        27017,       // 默认端口
 		Username:    "",          // 本地通常无用户名
 		Password:    "",          // 密码隐藏
 		Database:    dbName,
-		Collections: make(map[string]datastorage.CollectionInformation),
+		Collections: make(map[string]CollectionInformation),
 	}
 
 	// 获取集合列表
@@ -112,7 +126,7 @@ func (c *MongoDBConnector) ExtractConnectionInfo(dbName string) (*datastorage.Mo
 		}
 
 		// 添加集合信息
-		connInfo.Collections[collName] = datastorage.CollectionInformation{
+		connInfo.Collections[collName] = CollectionInformation{
 			Fields:     fields,
 			SampleData: string(sampleJSON),
 		}
@@ -147,4 +161,9 @@ func getMongoType(value interface{}) string {
 	default:
 		return "unknown"
 	}
+}
+
+// GetClient 获取MongoDB客户端
+func (c *MongoDBConnector) GetClient() *mongo.Client {
+	return c.client
 }

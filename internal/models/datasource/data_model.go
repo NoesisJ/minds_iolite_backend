@@ -8,12 +8,15 @@ import (
 type ColumnType string
 
 const (
-	ColumnTypeString  ColumnType = "string"
-	ColumnTypeInteger ColumnType = "integer"
-	ColumnTypeFloat   ColumnType = "float"
-	ColumnTypeBoolean ColumnType = "boolean"
-	ColumnTypeDate    ColumnType = "date"
-	ColumnTypeObject  ColumnType = "object"
+	ColumnTypeString    ColumnType = "string"
+	ColumnTypeInteger   ColumnType = "integer"
+	ColumnTypeFloat     ColumnType = "float"
+	ColumnTypeBoolean   ColumnType = "boolean"
+	ColumnTypeDateTime  ColumnType = "datetime"
+	ColumnTypeDate      ColumnType = "date"
+	ColumnTypeTimestamp ColumnType = "timestamp"
+	ColumnTypeArray     ColumnType = "array"
+	ColumnTypeObject    ColumnType = "object"
 )
 
 // Column 定义数据列的元信息

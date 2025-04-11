@@ -5,6 +5,7 @@ go 1.22.0
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-sql-driver/mysql v1.9.2
+	github.com/mattn/go-sqlite3 v1.14.27
 	github.com/spf13/viper v1.18.2
 	go.mongodb.org/mongo-driver v1.14.0
 )

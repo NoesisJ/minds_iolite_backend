@@ -43,5 +43,15 @@ func SetupDataSourceRoutes(router *gin.Engine) {
 			// 连接到MySQL
 			mysqlGroup.POST("/connect", dataSourceHandler.ConnectToMySQL)
 		}
+
+		// SQLite数据源相关路由
+		sqliteGroup := dataSourceGroup.Group("/sqlite")
+		{
+			// 处理SQLite文件
+			sqliteGroup.POST("/process", dataSourceHandler.ProcessSQLiteFile)
+
+			// 导入SQLite到MongoDB
+			sqliteGroup.POST("/import-to-mongo", dataSourceHandler.ImportSQLiteToMongoDB)
+		}
 	}
 }
