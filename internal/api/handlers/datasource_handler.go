@@ -361,11 +361,8 @@ func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
 		return
 	}
 
-	// 返回连接信息
-	c.JSON(http.StatusOK, gin.H{
-		"success":        true,
-		"connectionInfo": connInfo,
-	})
+	// 直接返回连接信息，不包含success和connectionInfo包装
+	c.JSON(http.StatusOK, connInfo)
 }
 
 // ConnectToMySQL 处理MySQL连接请求
@@ -376,7 +373,6 @@ func (h *DataSourceHandler) ConnectToMySQL(c *gin.Context) {
 		Username string `json:"username" binding:"required"`
 		Password string `json:"password"`
 		Database string `json:"database" binding:"required"`
-		Table    string `json:"table" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -404,8 +400,8 @@ func (h *DataSourceHandler) ConnectToMySQL(c *gin.Context) {
 	}
 	defer storage.Close()
 
-	// 生成指定表的连接信息
-	connInfo, err := storage.GenerateConnectionInfoForTable(request.Table)
+	// 获取所有表的连接信息
+	connInfo, err := storage.GenerateConnectionInfo()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -414,11 +410,8 @@ func (h *DataSourceHandler) ConnectToMySQL(c *gin.Context) {
 		return
 	}
 
-	// 返回连接信息
-	c.JSON(http.StatusOK, gin.H{
-		"success":        true,
-		"connectionInfo": connInfo,
-	})
+	// 直接返回连接信息，不包含success和connectionInfo包装
+	c.JSON(http.StatusOK, connInfo)
 }
 
 // ProcessSQLiteFile 处理本地SQLite文件

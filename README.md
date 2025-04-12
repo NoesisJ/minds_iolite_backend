@@ -1,518 +1,194 @@
-# Minds Iolite 
+# Minds Iolite Backend API 文档
 
-Minds Iolite Backend 是一个基于Golang的低代码平台后端实现，使用Gin作为Web框架，GORM进行数据操作，MongoDB作为数据库。该项目旨在为前端低代码平台提供灵活、高效的后端支持，允许用户通过拖拽方式构建信息管理系统，同时无需编写大量代码即可实现数据库操作。
+提供了Minds Iolite Backend系统的所有API接口定义
 
-## 已实现功能
+## 基础信息
 
-### 核心功能
-- ✅ 元数据模型定义和管理
-- ✅ 动态API自动生成
-- ✅ 数据验证和类型检查
-- ✅ 高级查询、排序和分页
-- ✅ MongoDB数据存储集成
-- ✅ CSV数据源处理
+- 基础URL: `http://localhost:8080`
+- 内容类型: `application/json`
 
-### API功能
-- ✅ 元数据管理API (`/metadata/*`)
-- ✅ 动态生成的数据API (`/api/*`)
-- ✅ 完整CRUD操作支持
-- ✅ 过滤、排序和分页
-- ✅ 数据源处理API (`/api/datasource/*`)
+## API响应格式
 
-## 快速开始
+所有API返回格式统一如下:
 
-### 依赖项
-- Go 1.18+
-- MongoDB 5.0+
-
-### 安装和运行
-1. 克隆仓库
-2. 配置MongoDB连接 (见 config/config.yaml)
-3. 运行 `go run cmd/server/main.go`
-4. 服务器默认监听 `:8080`
-
-### 使用示例
-1. 创建模型定义:
-   ```
-   POST /metadata/models
-   {
-     "name": "product",
-     "displayName": "产品",
-     "fields": [...]
-   }
-   ```
-
-2. 使用自动生成的API:
-   ```
-   POST /api/product
-   GET /api/product
-   GET /api/product/:id
-   PUT /api/product/:id
-   DELETE /api/product/:id
-   ```
-
-3. 使用高级查询:
-   ```
-   GET /api/product?category=electronics&sort=price:desc&page=1&pageSize=10
-   ```
-
-## CSV数据源处理
-
-我们已经实现了CSV数据源处理功能，使系统能够从本地CSV文件中读取、解析和转换数据，并提供统一的数据模型供Agent处理。
-
-### 功能特点
-- 自动检测CSV文件列数据类型
-- 支持不同分隔符和编码格式
-- 灵活的参数配置
-- 安全的文件路径处理
-- 流式处理大文件
-- 统一的数据验证和错误报告
-
-### 组件结构
-
-#### 1. 数据源模型 (internal/models/datasource)
-- **CSVSource**：定义CSV数据源配置，包括文件路径、分隔符等
-- **UnifiedDataModel**：统一数据模型，用于在不同数据源和Agent间传递数据
-- **Column/ColumnType**：数据列定义和类型系统
-- **ValidationError**：数据验证错误表示
-
-#### 2. CSV解析和转换 (internal/datasource/providers/csv)
-- **CSVParser**：负责读取和解析CSV文件，自动检测数据类型
-- **CSVConverter**：将CSV数据转换为统一数据模型
-- **各种辅助函数**：数据类型判断、格式转换等
-
-#### 3. API处理器 (internal/api/handlers)
-- **DataSourceHandler**：处理CSV相关HTTP请求
-- **处理本地CSV文件**：通过路径访问和处理CSV
-- **支持文件上传**：接收上传的CSV文件并处理
-
-### API接口
-
-1. **处理本地CSV文件**：
-   ```
-   URL: http://localhost:8080/api/datasource/csv/process
-   方法: POST
-   Content-Type: application/json
-
-   请求体:
-   {
-     "filePath": "E:/path/to/your/file.csv",
-     "options": {
-       "delimiter": ",",
-       "hasHeader": true,
-       "encoding": "utf-8"
-     }
-   }
-
-   响应:
-   {
-     "success": true,
-     "data": {
-       "totalRows": 1000,
-       "columns": ["id", "name", "age", "email"],
-       "previewData": [
-         {"id": "1", "name": "张三", "age": "30", "email": "zhangsan@example.com"},
-         // 更多预览数据...
-       ]
-     }
-   }
-   ```
-
-2. **获取CSV列类型**：
-   ```
-   URL: http://localhost:8080/api/datasource/csv/column-types
-   方法: POST
-   Content-Type: application/json
-
-   请求体:
-   {
-     "filePath": "E:/path/to/your/file.csv",
-     "delimiter": ",",
-     "hasHeader": true,
-     "sampleSize": 100
-   }
-
-   响应:
-   {
-     "success": true,
-     "columnTypes": {
-       "id": "integer",
-       "name": "string",
-       "age": "integer",
-       "email": "string"
-     }
-   }
-   ```
-
-3. **上传CSV文件**：
-   ```
-   URL: http://localhost:8080/api/datasource/csv/upload
-   方法: POST
-   Content-Type: multipart/form-data
-
-   表单字段:
-   file: [CSV文件]
-   delimiter: ,
-   hasHeader: true
-
-   响应:
-   {
-     "success": true,
-     "filePath": "E:/uploaded/files/data.csv",
-     "fileSize": 1024,
-     "message": "文件上传成功"
-   }
-   ```
-
-4. **将CSV导入MongoDB**：
-   ```
-   URL: http://localhost:8080/api/datasource/csv/import-to-mongo
-   方法: POST
-   Content-Type: application/json
-
-   请求体:
-   {
-     "filePath": "E:/path/to/your/file.csv",
-     "options": {
-       "delimiter": ",",
-       "hasHeader": true,
-       "encoding": "utf-8"
-     },
-     "dbName": "可选的数据库名",
-     "collName": "可选的集合名"
-   }
-
-   响应:
-   {
-     "success": true,
-     "connectionInfo": {
-       "host": "localhost",
-       "port": 27017,
-       "database": "csv_data",
-       "collections": {
-         "data": {
-           "fields": {
-             "id": "int",
-             "name": "str",
-             "age": "int",
-             "email": "str"
-           },
-           "sampleData": "{\"_id\":\"...\",\"id\":1,\"name\":\"张三\",\"age\":30,\"email\":\"zhangsan@example.com\"}"
-         }
-       }
-     },
-     "message": "CSV数据已成功导入到MongoDB"
-   }
-   ```
-
-## 组件功能详解
-
-### 数据源模型 (internal/models/datasource)
-
-#### csv_source.go
-- **CSVSource** - 定义CSV数据源配置
-  - `FilePath` - CSV文件路径
-  - `Delimiter` - 分隔符，默认为逗号
-  - `HasHeader` - 是否有表头
-  - `SkipRows` - 跳过起始行数
-  - `Encoding` - 文件编码
-  - `ColumnTypes` - 列数据类型映射
-- **NewCSVSource()** - 创建带默认值的CSV数据源
-- **Validate()** - 验证配置有效性和文件可访问性
-- **GetDelimiterRune()** - 获取分隔符的rune表示
-
-#### data_model.go
-- **ColumnType** - 数据列类型枚举（字符串、整数、浮点等）
-- **Column** - 数据列定义结构
-- **DataMetadata** - 数据集元数据信息
-- **ValidationError** - 数据验证错误结构
-- **UnifiedDataModel** - 统一数据模型结构
-  - `Metadata` - 元数据信息
-  - `Columns` - 列定义
-  - `Records` - 数据记录
-  - `TotalRecords` - 总记录数
-  - `Errors` - 验证错误列表
-- **NewUnifiedDataModel()** - 创建新的统一数据模型
-
-### CSV解析和转换 (internal/datasource/providers/csv)
-
-#### parser.go
-- **CSVParser** - CSV文件解析器
-- **CSVData** - 解析后的CSV数据结构
-- **NewCSVParser()** - 创建新的解析器
-- **Parse()** - 解析整个CSV文件
-- **ParseStream()** - 流式解析大文件
-- **DetectColumnTypes()** - 推断列数据类型
-- **inferColumnTypes()** - 从数据推断列类型
-- **validateFilePath()** - 验证文件路径安全性
-- **normalizeHeader()** - 规范化列标题
-- **isInteger()/isFloat()/isBoolean()/isDate()** - 类型判断辅助函数
-
-#### converter.go
-- **CSVConverter** - CSV数据转换器
-- **NewCSVConverter()** - 创建新的转换器
-- **ConvertToUnifiedModel()** - 将CSV数据转换为统一模型
-- **ValidateData()** - 验证CSV数据
-- **convertValue()** - 根据类型转换值
-- **validateValue()** - 验证值是否符合类型要求
-- **getDisplayName()** - 生成友好的显示名称
-- **parseBool()/parseDate()** - 辅助函数
-
-### API处理器 (internal/api/handlers)
-
-#### datasource_handler.go
-- **DataSourceHandler** - 数据源处理器
-- **NewDataSourceHandler()** - 创建数据源处理器
-- **ProcessCSVFile()** - 处理本地CSV文件路径
-- **GetColumnTypes()** - 获取CSV列类型
-- **UploadCSVFile()** - 处理文件上传
-
-### 路由 (internal/routes)
-
-#### datasource_routes.go
-- **SetupDataSourceRoutes()** - 注册数据源相关路由
-  - `/api/datasource/csv/process` - 处理CSV
-  - `/api/datasource/csv/column-types` - 获取列类型
-  - `/api/datasource/csv/upload` - 上传CSV
-
-## 后续开发计划
-- [ ] 用户认证和权限控制
-- [ ] 模型关系和联合查询
-- [ ] 自定义业务逻辑挂钩
-- [ ] 前端界面开发
-- [ ] 数据可视化和报表
-- [ ] 其他数据源集成 (MongoDB、MySQL)
-
-## 数据源集成计划
-
-### 待实现的数据源
-- [x] CSV文件导入与解析
-- [ ] MongoDB数据库连接与查询
-- [ ] MySQL数据库连接与查询
-
-## MongoDB和MySQL数据源集成
-
-不同于CSV处理直接使用本地文件路径，MongoDB和MySQL数据源需要通过连接URL进行访问。以下是对这两种数据源的实现规划：
-
-### MongoDB数据源
-
-#### 连接方式
-MongoDB使用URI连接字符串格式：
-```
-mongodb://[username:password@]host[:port][/database][?options]
+```json
+{
+  "success": true|false,        // 请求是否成功
+  "data|connectionInfo": {...}, // 成功时的数据
+  "error": "错误信息"            // 失败时的错误信息
+}
 ```
 
-#### 实现功能
-- 连接验证和测试
-- 数据库和集合列表获取
-- 集合结构和样本数据提取
-- 数据查询和转换
-- 本地MongoDB镜像创建（可选）
+## 数据源API
 
-#### API设计
+### 1. CSV文件处理
+
+CSV相关API提供了多种处理CSV数据的方式，从本地文件读取、文件上传到导入数据库的完整流程。
+
+#### 1.1 处理本地CSV文件
+
+**功能说明**: 处理**已存在于服务器本地文件系统**上的CSV文件，前端只需提供服务器上的文件路径。服务器读取并解析该CSV文件，返回数据预览。
+
+
+```
+POST /api/datasource/csv/process
+Content-Type: application/json
+
+请求体:
+{
+  "filePath": "E:/path/to/your/file.csv",  // 服务器本地文件路径
+  "options": {
+    "delimiter": ",",                       // 分隔符，默认为逗号
+    "hasHeader": true,                      // 是否有表头行
+    "encoding": "utf-8"                     // 文件编码
+  }
+}
+
+响应:
+{
+  "success": true,
+  "data": {
+    "totalRows": 1000,                      // 总行数
+    "columns": ["id", "name", "age", "email"], // 列名列表
+    "previewData": [                        // 数据预览，默认前10行
+      {"id": "1", "name": "张三", "age": "30", "email": "zhangsan@example.com"},
+      // 更多预览数据...
+    ]
+  }
+}
+```
+
+#### 1.2 获取CSV列类型
+
+**功能说明**: 分析CSV文件中每列的数据类型，以便进行更准确的数据处理。
+
+```
+POST /api/datasource/csv/column-types
+Content-Type: application/json
+
+请求体:
+{
+  "filePath": "E:/path/to/your/file.csv",
+  "delimiter": ",",
+  "hasHeader": true,
+  "sampleSize": 100
+}
+
+响应:
+{
+  "success": true,
+  "columnTypes": {
+    "id": "integer",
+    "name": "string",
+    "age": "integer",
+    "email": "string"
+  }
+}
+```
+
+#### 1.3 上传CSV文件
+
+**功能说明**: 允许用户从**客户端上传CSV文件到服务器**。文件将保存在服务器的指定目录中，便于后续处理。
+
+**使用场景**: 当用户需要将本地CSV文件上传到服务器以进行分析或导入数据库时使用。
+
+```
+POST /api/datasource/csv/upload
+Content-Type: multipart/form-data
+
+表单字段:
+file: [CSV文件]            // 上传的文件对象，通过表单提交
+delimiter: ,              // 可选，CSV分隔符
+hasHeader: true           // 可选，是否有表头
+
+响应:
+{
+  "success": true,
+  "filePath": "E:/uploaded/files/data.csv", // 服务器上保存的文件路径
+  "fileSize": 1024,                         // 文件大小(字节)
+  "message": "文件上传成功"
+}
+```
+
+上传成功后返回的`filePath`可直接用于后续API调用，如处理CSV或导入到MongoDB。
+
+#### 1.4 将CSV导入MongoDB
+
+**功能说明**: 将CSV数据导入到MongoDB数据库中，创建集合并存储数据。系统会自动处理类型转换和数据验证。
+
+**使用场景**: 需要持久化存储CSV数据并支持复杂查询时使用，比直接处理CSV文件更灵活和高效。
+
+```
+POST /api/datasource/csv/import-to-mongo
+Content-Type: application/json
+
+请求体:
+{
+  "filePath": "E:/path/to/your/file.csv",   // 服务器上的CSV文件路径
+  "options": {
+    "delimiter": ",",                        // 分隔符
+    "hasHeader": true,                       // 是否有表头
+    "encoding": "utf-8"                      // 文件编码
+  },
+  "dbName": "csv_data",                      // 可选，MongoDB数据库名，默认使用csv_文件名
+  "collName": "customers"                    // 可选，MongoDB集合名，默认为"data"
+}
+
+响应:
+{
+  "host": "localhost",                     // MongoDB主机地址
+  "port": 27017,                           // MongoDB端口
+  "username": "",
+  "password": "",
+  "database": "csv_data",                  // 使用的数据库名
+  "collections": {
+    "customers": {                         // 集合名
+      "fields": {                          // 字段类型信息
+        "_id": "ObjectId",                 // MongoDB自动生成的ID
+        "id": "int",
+        "name": "str",
+        "age": "int",
+        "email": "str"
+      },
+      "sample_data": "{\"_id\": ObjectId(\"67e50e0900ce029f7ac66046\"), \"id\": 1, \"name\": \"张三\", \"age\": 30, \"email\": \"zhangsan@example.com\"}"
+    }
+  }
+}
+```
+
+**注意**: 导入后的数据将保存在本地MongoDB数据库中，可通过MongoDB连接API直接访问数据。
+
+### 2. MongoDB连接
+
+**功能说明**: 连接到现有的MongoDB数据库，获取集合信息和样本数据。可以连接导入后的CSV数据或其他MongoDB数据源。
+
+**使用场景**: 访问已存在的MongoDB数据库，将其中的数据提供给前端展示或分析。
+
 ```
 POST /api/datasource/mongodb/connect
 Content-Type: application/json
 
+请求体:
 {
-  "ConnectionURI": "mongodb://localhost:27017",
-  "Database": "database_name"
+  "ConnectionURI": "mongodb://localhost:27017",  // MongoDB连接URI
+  "Database": "database_name"                    // 要连接的数据库名
 }
-```
 
-#### 返回格式
-```json
+响应:
 {
-  "success": true,
-  "connectionInfo": {
-    "host": "localhost",
-    "port": 27017,
-    "username": "",
-    "password": "",
-    "database": "database_name",
-    "collections": {
-      "collection_name": {
-        "fields": {
-          "_id": "ObjectId",
-          "field1": "str",
-          "field2": "int"
-        },
-        "sample_data": "{\"_id\": \"...\", \"field1\": \"value\", ...}"
-      }
-    }
-  }
-}
-```
-
-### 使用示例
-
-连接到MongoDB数据库:
-```
-curl -X POST http://localhost:8080/api/datasource/mongodb/connect \
-  -H "Content-Type: application/json" \
-  -d '{
-    "ConnectionURI": "mongodb://localhost:27017",
-    "Database": "csv_customers"
-  }'
-```
-
-响应示例:
-```json
-{
-  "success": true,
-  "connectionInfo": {
-    "host": "localhost",
-    "port": 27017,
-    "username": "",
-    "password": "",
-    "database": "csv_customers",
-    "collections": {
-      "data": {
-        "fields": {
-          "_id": "ObjectId",
-          "age": "int",
-          "city": "str",
-          "credit_score": "int",
-          "email": "str",
-          "id": "int",
-          "is_active": "bool",
-          "name": "str",
-          "registration_date": "date"
-        },
-        "sample_data": "{\"_id\":\"67f7c9e79f2d90b8bcdfa47c\",\"age\":35,\"city\":\"北京\",\"credit_score\":720,\"email\":\"zhangsan@example.com\",\"id\":1,\"is_active\":true,\"name\":\"张三\",\"registration_date\":\"2022-01-15T00:00:00Z\"}"
-      }
-    }
-  }
-}
-```
-
-### MySQL数据源
-
-#### 连接方式
-MySQL使用DSN (Data Source Name) 连接字符串格式：
-```
-username:password@tcp(host:port)/database?param=value
-```
-
-#### 实现功能
-- 数据库连接和验证
-- 表结构和关系提取
-- SQL查询支持
-- 表数据样本获取
-- 本地数据镜像（可选）
-
-#### API设计
-```
-POST /api/datasource/mysql/connect
-Content-Type: application/json
-
-{
-  "host": "localhost",
-  "port": 3306,
-  "username": "dbuser",
-  "password": "dbpassword",
-  "database": "mydatabase",
-  "table": "tablename"
-}
-```
-
-#### 返回格式
-```json
-{
-  "success": true,
-  "connectionInfo": {
-    "host": "localhost",
-    "port": 3306,
-    "username": "dbuser",
-    "password": "",
-    "database": "mydatabase",
-    "tables": {
-      "tablename": {
-        "fields": {
-          "id": "int",
-          "name": "str",
-          "email": "str",
-          "created_at": "date"
-        },
-        "sample_data": "{\"id\": 1, \"name\": \"张三\", \"email\": \"zhangsan@example.com\", \"created_at\": \"2024-03-26T10:30:00Z\"}"
-      }
-    }
-  }
-}
-```
-
-### 使用示例
-
-连接到MySQL数据库特定表:
-```bash
-curl -X POST http://localhost:8080/api/datasource/mysql/connect \
-  -H "Content-Type: application/json" \
-  -d '{
-    "host": "tarsgo.com",
-    "port": 3306,
-    "username": "tarsgo",
-    "password": "xf210398444@",
-    "database": "tarsgo",
-    "table": "members"
-  }'
-```
-
-响应示例:
-```json
-{
-  "success": true,
-  "connectionInfo": {
-    "host": "tarsgo.com",
-    "port": 3306,
-    "username": "tarsgo",
-    "database": "tarsgo",
-    "tables": {
-      "members": {
-        "fields": {
-          "id": "int",
-          "name": "str",
-          "email": "str",
-          "phone": "str",
-          "gender": "str",
-          "grade": "str",
-          "major": "str",
-          "campus": "str",
-          "branch": "str",
-          "group": "str",
-          "identity": "str",
-          "qq": "str",
-          "we_chat": "str",
-          "created_at": "date",
-          "updated_at": "date"
-        },
-        "sample_data": "{\"id\": 1, \"name\": \"张三\", \"email\": \"zhangsan@example.com\", ...}"
-      }
-    }
-  }
-}
-```
-
-注意事项：
-1. `table` 参数现在是必需的，用于指定要连接的具体表
-2. 返回的数据只包含指定表的结构和样本数据
-3. 样本数据会返回表中的一条实际记录（如果存在）
-4. 所有字段类型都会被映射为统一的类型表示（int, str, date, float, bool, binary）
-
-## agent连接信息示例
-{
-  "host": "localhost",
-  "port": 27017,
-  "username": "",
-  "password": "",
-  "database": "company",
-  "collections": {
-    "departments": {
-      "fields": {
-        "_id": "ObjectId",
-        "名字": "str",
-        "部门": "str"
+  "host": "localhost",                         // 数据库主机
+  "port": 27017,                               // 数据库端口
+  "username": "",                              // 用户名(如有)
+  "password": "",                              // 密码(返回时为空，保护敏感信息)
+  "database": "database_name",                 // 数据库名
+  "collections": {                             // 集合信息
+    "departments": {                           // 集合名
+      "fields": {                              // 字段类型信息
+        "_id": "ObjectId",                     // MongoDB ID字段
+        "名字": "str",                         // 字符串类型字段
+        "部门": "str"                          // 字符串类型字段
       },
-      "sample_data":"{\"_id\": ObjectId(\"67e50e0900ce029f7ac66046\"), \"名字\": \"孙七\", \"部门\": \"销售部\"}"
+      "sample_data": "{\"_id\": ObjectId(\"67e50e0900ce029f7ac66046\"), \"名字\": \"孙七\", \"部门\": \"销售部\"}"
     },
     "attendance": {
       "fields": {
@@ -521,54 +197,111 @@ curl -X POST http://localhost:8080/api/datasource/mysql/connect \
         "日期": "str",
         "考勤": "str"
       },
-      "sample_data":"{\"_id\": ObjectId(\"67e50e146add66f28b6746dc\"), \"姓名\": \"张三\", \"日期\": \"2024-03-25\", \"考勤\": \"出勤\"}"
+      "sample_data": "{\"_id\": ObjectId(\"67e50e146add66f28b6746dc\"), \"姓名\": \"张三\", \"日期\": \"2024-03-25\", \"考勤\": \"出勤\"}"
     }
   }
 }
+```
 
-### 安全考虑
+**注意**: 连接URI支持所有标准MongoDB连接字符串参数，包括认证信息、复制集配置等。
 
-1. **敏感信息保护**：
-   - 不在日志中记录完整连接字符串
-   - 在返回结构中隐藏密码信息
-   - 支持加密存储连接信息
+### 3. MySQL连接
 
-2. **连接限制**：
-   - 增加连接超时设置
-   - 限制并发连接数
-   - 支持只读模式连接
+**功能说明**: 连接到MySQL数据库，获取数据库中所有表的结构和样本数据。
 
-3. **权限管理**：
-   - 验证用户拥有足够的数据库权限
-   - 建议使用最小权限原则配置的账户
-   - 提供连接授权验证机制
+**使用场景**: 访问现有MySQL数据库中的数据，无需导出再导入即可在系统中使用。
 
-### SQLite数据源
+```
+POST /api/datasource/mysql/connect
+Content-Type: application/json
 
-Minds Iolite Backend现在支持SQLite数据源，可以处理.db、.sqlite和.sqlite3格式的SQLite数据库文件，并支持将其导入到MongoDB中。
+请求体:
+{
+  "host": "localhost",         // MySQL主机地址
+  "port": 3306,                // MySQL端口，默认3306
+  "username": "dbuser",        // 数据库用户名
+  "password": "dbpassword",    // 数据库密码
+  "database": "mydatabase"     // 数据库名
+}
 
-#### API设计
+响应:
+{
+  "host": "tarsgo.com",
+  "port": 3306,
+  "username": "tarsgo",
+  "password": "",            // 返回时密码为空，保护敏感信息
+  "database": "tarsgo",
+  "tables": {
+    "Article": {
+      "fields": {
+        "ID": "int(11) unsigned",
+        "title": "longtext",
+        "time": "text",
+        "classification": "text",
+        "nickname": "text",
+        "content": "longtext",
+        "images": "longtext"
+      },
+      "sample_data": "{\"ID\": 19, \"title\": \"南岭杏花节\", \"time\": \"2023-04-16\", \"classification\": \"活动\", \"nickname\": \"何佳悦 邢浩泽 赵天培 周昊燃 杨好 宫硕 龚博文 李海齐 吴子豪 陈力进 孙健皓 穆子圣 章紫嫣 ...\", \"content\": \"南岭杏花节活动总结\\n                                负责人:何佳悦\\n...\", \"images\": \"[{\\\"name\\\":\\\"83741112_582256a667c2fe201f616a090b3d2d5...\"}"
+    },
+    "Data": {
+      "fields": {
+        "ID": "bigint(20)",
+        "nickname": "varchar(255)",
+        "IDcard": "longtext",
+        "sex": "varchar(255)",
+        "age": "text",
+        "address": "text",
+        "classification": "text",
+        "school": "text",
+        "subjects": "text",
+        "phone": "varchar(255)",
+        "email": "varchar(255)",
+        "qq": "varchar(255)",
+        "wechat": "varchar(255)",
+        "webID": "text",
+        "jlugroup": "text",
+        "study": "text",
+        "identity": "text",
+        "state": "text",
+        "image1": "longtext",
+        "image2": "longtext"
+      },
+      "sample_data": "{\"ID\": 403, \"nickname\": \"才爽\", \"IDcard\": \"https://tarsgo.xf233.com/TARSGO/person/才爽.jpeg\", \"sex\": \"女\", \"age\": \"2020\", \"address\": \"吉林省长春市\", \"classification\": \"40200106\", \"school\": \"前卫南区\", \"subjects\": \"人工智能\", \"phone\": \"13039134133\", \"email\": \"2376749633@qq.com\", \"qq\": \"2376749633\", \"wechat\": \"13039134133\", \"webID\": \"155\", \"jlugroup\": \"视觉组\", \"study\": \"哨兵\", \"identity\": \"正式队员\", \"state\": \"是\", \"image1\": \"\", \"image2\": \"\"}"
+    }
+    // 更多表...
+  }
+}
+```
 
-##### 1. 处理SQLite文件
+**注意**: API将返回数据库中所有表的结构和样本数据，便于前端全面了解数据库信息。
+
+### 4. SQLite数据源
+
+#### 4.1 处理SQLite文件
+
+**功能说明**: 读取服务器上的SQLite数据库文件，获取其中的表结构和数据。
+
+**使用场景**: 当有现成的SQLite数据库文件需要查看或导入时使用。
+
 ```
 POST /api/datasource/sqlite/process
 Content-Type: application/json
 
+请求体:
 {
-  "filePath": "E:/path/to/your/database.db",
-  "table": "users"  // 可选，指定要查看的表，不提供则返回所有表信息
+  "filePath": "E:/path/to/your/database.db",  // 服务器上的SQLite文件路径
+  "table": "users"                            // 可选，指定要查看的表，不提供则返回所有表信息
 }
-```
 
-##### 返回格式
-```json
+响应:
 {
   "success": true,
   "data": {
     "filePath": "E:/path/to/your/database.db",
     "tables": {
-      "users": {
-        "fields": {
+      "users": {                              // 表名
+        "fields": {                           // 字段信息
           "id": "int",
           "name": "str",
           "email": "str",
@@ -581,22 +314,28 @@ Content-Type: application/json
 }
 ```
 
-##### 2. 导入SQLite数据到MongoDB
+**注意**: 支持.db、.sqlite和.sqlite3格式的SQLite数据库文件。
+
+#### 4.2 导入SQLite数据到MongoDB
+
+**功能说明**: 将SQLite数据库中的表数据导入到MongoDB中，实现不同数据库之间的迁移。
+
+**使用场景**: 需要将SQLite数据迁移到MongoDB，以便利用MongoDB的高级特性和查询能力。
+
 ```
 POST /api/datasource/sqlite/import-to-mongo
 Content-Type: application/json
 
+请求体:
 {
-  "filePath": "E:/path/to/your/database.db",
-  "table": "users",                      // 要导入的SQLite表名
-  "mongoUri": "mongodb://localhost:27017", // 可选，MongoDB连接URI
-  "dbName": "sqlite_database",           // 可选，MongoDB数据库名
-  "collName": "users"                    // 可选，MongoDB集合名
+  "filePath": "E:/path/to/your/database.db",    // SQLite文件路径
+  "table": "users",                             // 要导入的SQLite表名
+  "mongoUri": "mongodb://localhost:27017",      // 可选，MongoDB连接URI
+  "dbName": "sqlite_database",                  // 可选，MongoDB数据库名
+  "collName": "users"                           // 可选，MongoDB集合名
 }
-```
 
-##### 返回格式
-```json
+响应:
 {
   "success": true,
   "connectionInfo": {
@@ -608,8 +347,8 @@ Content-Type: application/json
     "collections": {
       "users": {
         "fields": {
-          "_id": "ObjectId",
-          "id": "int",
+          "_id": "ObjectId",                    // MongoDB自动生成的唯一ID
+          "id": "int",                          // 原SQLite表中的ID
           "name": "str",
           "email": "str",
           "created_at": "date"
@@ -622,36 +361,33 @@ Content-Type: application/json
 }
 ```
 
-### 使用示例
+**注意**:
+- 如未指定dbName，默认使用"sqlite_文件名"作为数据库名
+- 如未指定collName，默认使用表名作为集合名
+- 导入完成后，数据存储在本地MongoDB服务中，可通过MongoDB连接API访问
 
-#### 处理SQLite文件:
-```bash
-curl -X POST http://localhost:8080/api/datasource/sqlite/process \
-  -H "Content-Type: application/json" \
-  -d '{
-    "filePath": "E:/data/example.db",
-    "table": "customers"
-  }'
+## 数据类型映射
+
+所有数据源API统一使用以下数据类型表示:
+
+| 原始类型 | API返回类型 | 说明 |
+|---------|------------|------|
+| 整数类型 | `int` | 包括int, integer, bigint等 |
+| 浮点类型 | `float` | 包括float, double, decimal等 |
+| 字符串类型 | `str` | 包括varchar, text, char等 |
+| 布尔类型 | `bool` | 包括boolean, tinyint(1)等 |
+| 日期时间类型 | `date` | 包括date, datetime, timestamp等 |
+| 二进制类型 | `binary` | 包括blob, binary等 |
+| MongoDB ObjectId | `ObjectId` | MongoDB的唯一标识符 |
+| 未知类型 | `unknown` | 无法识别的类型 |
+
+## 错误处理
+
+所有API在遇到错误时会返回相应的HTTP状态码和错误信息:
+
+```json
+{
+  "success": false,
+  "error": "错误信息描述"
+}
 ```
-
-#### 导入SQLite数据到MongoDB:
-```bash
-curl -X POST http://localhost:8080/api/datasource/sqlite/import-to-mongo \
-  -H "Content-Type: application/json" \
-  -d '{
-    "filePath": "E:/data/example.db",
-    "table": "customers",
-    "dbName": "my_database",
-    "collName": "customers_collection"
-  }'
-```
-
-#### 注意事项:
-1. 后端服务需安装SQLite驱动（github.com/mattn/go-sqlite3）
-2. 对于大型SQLite数据库，导入过程可能需要较长时间
-3. 支持的SQLite文件格式：.db、.sqlite和.sqlite3
-4. 可选参数说明：
-   - `table`: 指定要处理的表名，不提供则处理所有表
-   - `dbName`: MongoDB数据库名，默认为"sqlite_文件名"
-   - `collName`: MongoDB集合名，默认为与表名相同
-   - `mongoUri`: MongoDB连接URI，默认为"mongodb://localhost:27017" 
