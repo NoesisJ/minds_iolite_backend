@@ -2,10 +2,24 @@
 
 提供了Minds Iolite Backend系统的所有API接口定义
 
+**对于每个会话前端需要在创建时返回一个唯一标识
+
 ## 基础信息
 
 - 基础URL: `http://localhost:8080`
 - 内容类型: `application/json`
+
+## 跨域(CORS)支持
+
+本API服务已配置跨域资源共享(CORS)支持，允许从不同域名的前端应用程序访问：
+
+- 允许所有来源(`*`)的请求
+- 支持的请求方法: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`
+- 支持的请求头: `Origin`, `Content-Type`, `Content-Length`, `Accept-Encoding`, `X-CSRF-Token`, `Authorization`
+- 允许携带凭证(Credentials)
+- 预检请求(OPTIONS)缓存时间为12小时
+
+在生产环境部署时，建议将`AllowOrigins`设置为特定的前端域名，以增强安全性。
 
 ## API响应格式
 

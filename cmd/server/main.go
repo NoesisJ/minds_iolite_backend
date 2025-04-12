@@ -11,6 +11,7 @@ import (
 	"minds_iolite_backend/internal/database"
 	"minds_iolite_backend/internal/routes"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,6 +45,16 @@ func main() {
 	// 在创建router之前添加
 	gin.SetMode(gin.DebugMode)
 	router := gin.Default()
+	
+	// 配置CORS中间件
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},  // 允许所有来源，生产环境中应该限制特定域名
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// 设置API路由
 	if err := routes.SetupRoutes(router, mongoDB); err != nil {
