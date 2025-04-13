@@ -1,0 +1,23 @@
+{
+  "host": "localhost",
+  "port": 27017,
+  "username": "",
+  "password": "",
+  "database": "csv_data",
+  "collections": {
+    "customers": {
+      "fields": {
+        "_id": "ObjectId",
+        "age": "int",
+        "city": "str",
+        "credit_score": "int",
+        "email": "str",
+        "id": "int",
+        "is_active": "bool",
+        "name": "str",
+        "registration_date": "date"
+      },
+      "sample_data": "{\"_id\":\"67fbbbdd846a8616fff74eb9\",\"age\":35,\"city\":\"北京\",\"credit_score\":720,\"email\":\"zhangsan@example.com\",\"id\":1,\"is_active\":true,\"name\":\"张三\",\"registration_date\":\"2022-01-15T00:00:00Z\"}"
+    }
+  }
+}

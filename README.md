@@ -114,15 +114,42 @@ Content-Type: multipart/form-data
 file: [CSV文件]            // 上传的文件对象，通过表单提交
 delimiter: ,              // 可选，CSV分隔符
 hasHeader: true           // 可选，是否有表头
+importToMongo: false      // 可选，是否自动导入到MongoDB，默认false
+dbName: ""                // 可选，MongoDB数据库名，仅importToMongo=true时有效
+collName: ""              // 可选，MongoDB集合名，仅importToMongo=true时有效
 
-响应:
+响应（当importToMongo=false时）:
 {
   "success": true,
   "filePath": "E:/uploaded/files/data.csv", // 服务器上保存的文件路径
   "fileSize": 1024,                         // 文件大小(字节)
   "message": "文件上传成功"
 }
+
+响应（当importToMongo=true时）: 
+// 返回与1.4 API相同的MongoDB连接信息
+{
+  "host": "localhost",                     // MongoDB主机地址
+  "port": 27017,                           // MongoDB端口
+  "username": "",
+  "password": "",
+  "database": "csv_data",                  // 使用的数据库名
+  "collections": {
+    "customers": {                         // 集合名
+      "fields": {                          // 字段类型信息
+        "_id": "ObjectId",                 // MongoDB自动生成的ID
+        "id": "int",
+        "name": "str",
+        "age": "int",
+        "email": "str"
+      },
+      "sample_data": "{\"_id\": ObjectId(\"67e50e0900ce029f7ac66046\"), \"id\": 1, \"name\": \"张三\", \"age\": 30, \"email\": \"zhangsan@example.com\"}"
+    }
+  }
+}
 ```
+
+**功能增强**: 设置`importToMongo=true`时，API会在上传文件后自动将数据导入到MongoDB，省去了先上传再导入的两步操作。
 
 上传成功后返回的`filePath`可直接用于后续API调用，如处理CSV或导入到MongoDB。
 

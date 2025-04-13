@@ -1,7 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"minds_iolite_backend/internal/datasource/providers/csv"
 	"minds_iolite_backend/internal/datasource/providers/mongodb"
@@ -185,6 +191,11 @@ func (h *DataSourceHandler) UploadCSVFile(c *gin.Context) {
 	delimiter := c.DefaultPostForm("delimiter", ",")
 	hasHeader := c.DefaultPostForm("hasHeader", "true") == "true"
 
+	// 获取MongoDB导入参数
+	importToMongo := c.DefaultPostForm("importToMongo", "false") == "true"
+	dbName := c.DefaultPostForm("dbName", "")
+	collName := c.DefaultPostForm("collName", "")
+
 	// 创建CSV数据源
 	csvSource := datasource.NewCSVSource(tempPath)
 	csvSource.Delimiter = delimiter
@@ -199,36 +210,107 @@ func (h *DataSourceHandler) UploadCSVFile(c *gin.Context) {
 		return
 	}
 
-	// 创建解析器
-	parser := csv.NewCSVParser(csvSource)
+	// 如果需要导入到MongoDB
+	if importToMongo {
+		// 创建解析器
+		parser := csv.NewCSVParser(csvSource)
 
-	// 解析CSV文件
-	csvData, err := parser.Parse()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"error":   "解析CSV文件失败: " + err.Error(),
-		})
+		// 解析CSV文件
+		csvData, err := parser.Parse()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   "解析CSV文件失败: " + err.Error(),
+			})
+			return
+		}
+
+		// 创建转换器
+		converter := csv.NewCSVConverter(nil, nil)
+
+		// 转换为统一数据模型
+		model, err := converter.ConvertToUnifiedModel(csvSource, csvData)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   "转换数据失败: " + err.Error(),
+			})
+			return
+		}
+
+		// 创建MongoDB存储服务
+		mongoURI := "mongodb://localhost:27017"
+		storage, err := datastorage.NewMongoStorage(mongoURI)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   "连接MongoDB失败: " + err.Error(),
+			})
+			return
+		}
+		defer storage.Close()
+
+		// 如果未提供数据库名，默认使用csv_文件名
+		if dbName == "" {
+			fileName := filepath.Base(tempPath)
+			fileNameWithoutExt := strings.TrimSuffix(fileName, filepath.Ext(fileName))
+			dbName = "csv_" + fileNameWithoutExt
+		}
+
+		// 如果未提供集合名，默认使用"data"
+		if collName == "" {
+			collName = "data"
+		}
+
+		// 导入数据到MongoDB
+		connInfo, err := storage.ImportCSVToMongoDB(model, dbName, collName)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   "导入数据到MongoDB失败: " + err.Error(),
+			})
+			return
+		}
+
+		// 获取配置信息的保存路径 - 修改为保存在与项目同级的data目录
+		// 获取当前工作目录
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Printf("警告: 无法获取当前工作目录: %v", err)
+		} else {
+			// 设置config.json保存在项目同级的data目录
+			configPath := filepath.Join(filepath.Dir(wd), "data", "config.json")
+
+			// 确保data目录存在
+			dataDir := filepath.Join(filepath.Dir(wd), "data")
+			if err := os.MkdirAll(dataDir, 0755); err != nil {
+				log.Printf("警告: 无法创建data目录: %v", err)
+			} else {
+				// 将配置信息保存到config.json
+				configData, err := json.MarshalIndent(connInfo, "", "  ")
+				if err != nil {
+					log.Printf("警告: 无法序列化配置数据: %v", err)
+				} else {
+					if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+						log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
+					} else {
+						log.Printf("已将配置信息保存到: %s", configPath)
+					}
+				}
+			}
+		}
+
+		// 直接返回连接信息
+		c.JSON(http.StatusOK, connInfo)
 		return
 	}
 
-	// 创建转换器
-	converter := csv.NewCSVConverter(nil, nil)
-
-	// 转换为统一数据模型
-	model, err := converter.ConvertToUnifiedModel(csvSource, csvData)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"error":   "转换数据失败: " + err.Error(),
-		})
-		return
-	}
-
-	// 返回处理结果
+	// 如果不需要导入到MongoDB，则返回上传成功信息
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data":    model,
+		"success":  true,
+		"filePath": tempPath,
+		"fileSize": file.Size,
+		"message":  "文件上传成功",
 	})
 }
 
@@ -248,6 +330,10 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 		})
 		return
 	}
+
+	// 记录请求信息
+	log.Printf("接收到CSV导入请求: 文件路径=%s, 数据库=%s, 集合=%s",
+		request.FilePath, request.DbName, request.CollName)
 
 	// 创建CSV数据源
 	var csvSource *datasource.CSVSource
@@ -279,6 +365,8 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 		})
 		return
 	}
+
+	log.Printf("成功解析CSV文件: %s, 共 %d 行数据", request.FilePath, len(csvData.Rows))
 
 	// 创建转换器
 	converter := csv.NewCSVConverter(nil, nil)
@@ -313,6 +401,34 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 			"error":   "导入数据到MongoDB失败: " + err.Error(),
 		})
 		return
+	}
+
+	// 获取配置信息的保存路径 - 修改为保存在与项目同级的data目录
+	// 获取当前工作目录
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Printf("警告: 无法获取当前工作目录: %v", err)
+	} else {
+		// 设置config.json保存在项目同级的data目录
+		configPath := filepath.Join(filepath.Dir(wd), "data", "config.json")
+
+		// 确保data目录存在
+		dataDir := filepath.Join(filepath.Dir(wd), "data")
+		if err := os.MkdirAll(dataDir, 0755); err != nil {
+			log.Printf("警告: 无法创建data目录: %v", err)
+		} else {
+			// 将配置信息保存到config.json
+			configData, err := json.MarshalIndent(connInfo, "", "  ")
+			if err != nil {
+				log.Printf("警告: 无法序列化配置数据: %v", err)
+			} else {
+				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
+				} else {
+					log.Printf("已将配置信息保存到: %s", configPath)
+				}
+			}
+		}
 	}
 
 	// 直接返回连接信息，不包含success和data包装
