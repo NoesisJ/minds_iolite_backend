@@ -272,17 +272,17 @@ func (h *DataSourceHandler) UploadCSVFile(c *gin.Context) {
 			return
 		}
 
-		// 获取配置信息的保存路径 - 修改为保存在与项目同级的data目录
+		// 获取配置信息的保存路径 - 修改为保存在可执行文件所在目录的data子目录
 		// 获取当前工作目录
 		wd, err := os.Getwd()
 		if err != nil {
 			log.Printf("警告: 无法获取当前工作目录: %v", err)
 		} else {
-			// 设置config.json保存在项目同级的data目录
-			configPath := filepath.Join(filepath.Dir(wd), "data", "config.json")
+			// 设置config.json保存在当前目录的data目录
+			dataDir := filepath.Join(wd, "data")
+			configPath := filepath.Join(dataDir, "config.json")
 
 			// 确保data目录存在
-			dataDir := filepath.Join(filepath.Dir(wd), "data")
 			if err := os.MkdirAll(dataDir, 0755); err != nil {
 				log.Printf("警告: 无法创建data目录: %v", err)
 			} else {
@@ -316,32 +316,88 @@ func (h *DataSourceHandler) UploadCSVFile(c *gin.Context) {
 
 // ImportCSVToMongoDB 处理将CSV导入MongoDB的请求
 func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
-	var request struct {
-		FilePath string                `json:"filePath" binding:"required"`
-		Options  *datasource.CSVSource `json:"options"`
-		DbName   string                `json:"dbName"`
-		CollName string                `json:"collName"`
-	}
-
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   "无效的请求参数: " + err.Error(),
-		})
-		return
-	}
-
-	// 记录请求信息
-	log.Printf("接收到CSV导入请求: 文件路径=%s, 数据库=%s, 集合=%s",
-		request.FilePath, request.DbName, request.CollName)
-
-	// 创建CSV数据源
+	var filePath string
+	var dbName string
+	var collName string
 	var csvSource *datasource.CSVSource
-	if request.Options != nil {
-		csvSource = request.Options
-		csvSource.FilePath = request.FilePath
+
+	// 检查内容类型
+	contentType := c.GetHeader("Content-Type")
+
+	// 处理multipart/form-data类型 (文件上传)
+	if strings.Contains(contentType, "multipart/form-data") {
+		// 获取上传的文件
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error":   "获取上传文件失败: " + err.Error(),
+			})
+			return
+		}
+
+		// 生成临时文件路径
+		filePath = "temp/" + file.Filename
+
+		// 保存上传的文件
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   "保存上传文件失败: " + err.Error(),
+			})
+			return
+		}
+
+		// 获取CSV选项
+		delimiter := c.DefaultPostForm("delimiter", ",")
+		hasHeader := c.DefaultPostForm("hasHeader", "true") == "true"
+		encoding := c.DefaultPostForm("encoding", "utf-8")
+
+		// 获取MongoDB选项
+		dbName = c.DefaultPostForm("dbName", "")
+		collName = c.DefaultPostForm("collName", "")
+
+		// 创建CSV数据源
+		csvSource = datasource.NewCSVSource(filePath)
+		csvSource.Delimiter = delimiter
+		csvSource.HasHeader = hasHeader
+		csvSource.Encoding = encoding
+
+		// 记录文件上传
+		log.Printf("通过文件上传方式接收CSV: %s, 分隔符: %s, 表头: %v",
+			filePath, delimiter, hasHeader)
 	} else {
-		csvSource = datasource.NewCSVSource(request.FilePath)
+		// 处理application/json类型 (原有逻辑)
+		var request struct {
+			FilePath string                `json:"filePath" binding:"required"`
+			Options  *datasource.CSVSource `json:"options"`
+			DbName   string                `json:"dbName"`
+			CollName string                `json:"collName"`
+		}
+
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error":   "无效的请求参数: " + err.Error(),
+			})
+			return
+		}
+
+		// 设置参数
+		filePath = request.FilePath
+		dbName = request.DbName
+		collName = request.CollName
+
+		// 创建CSV数据源
+		if request.Options != nil {
+			csvSource = request.Options
+			csvSource.FilePath = filePath
+		} else {
+			csvSource = datasource.NewCSVSource(filePath)
+		}
+
+		// 记录服务器路径方式
+		log.Printf("通过服务器路径接收CSV: %s", filePath)
 	}
 
 	// 验证数据源
@@ -365,8 +421,6 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 		})
 		return
 	}
-
-	log.Printf("成功解析CSV文件: %s, 共 %d 行数据", request.FilePath, len(csvData.Rows))
 
 	// 创建转换器
 	converter := csv.NewCSVConverter(nil, nil)
@@ -394,7 +448,7 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 	defer storage.Close()
 
 	// 导入数据到MongoDB
-	connInfo, err := storage.ImportCSVToMongoDB(model, request.DbName, request.CollName)
+	connInfo, err := storage.ImportCSVToMongoDB(model, dbName, collName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -403,17 +457,17 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 		return
 	}
 
-	// 获取配置信息的保存路径 - 修改为保存在与项目同级的data目录
+	// 获取配置信息的保存路径 - 修改为保存在可执行文件所在目录的data子目录
 	// 获取当前工作目录
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Printf("警告: 无法获取当前工作目录: %v", err)
 	} else {
-		// 设置config.json保存在项目同级的data目录
-		configPath := filepath.Join(filepath.Dir(wd), "data", "config.json")
+		// 设置config.json保存在当前目录的data目录
+		dataDir := filepath.Join(wd, "data")
+		configPath := filepath.Join(dataDir, "config.json")
 
 		// 确保data目录存在
-		dataDir := filepath.Join(filepath.Dir(wd), "data")
 		if err := os.MkdirAll(dataDir, 0755); err != nil {
 			log.Printf("警告: 无法创建data目录: %v", err)
 		} else {

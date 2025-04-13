@@ -159,6 +159,9 @@ collName: ""              // 可选，MongoDB集合名，仅importToMongo=true�
 
 **使用场景**: 需要持久化存储CSV数据并支持复杂查询时使用，比直接处理CSV文件更灵活和高效。
 
+**支持两种调用方式**:
+
+1. **通过JSON指定服务器路径**:
 ```
 POST /api/datasource/csv/import-to-mongo
 Content-Type: application/json
@@ -174,8 +177,24 @@ Content-Type: application/json
   "dbName": "csv_data",                      // 可选，MongoDB数据库名，默认使用csv_文件名
   "collName": "customers"                    // 可选，MongoDB集合名，默认为"data"
 }
+```
 
-响应:
+2. **直接上传文件**:
+```
+POST /api/datasource/csv/import-to-mongo
+Content-Type: multipart/form-data
+
+表单字段:
+file: [CSV文件]            // 上传的文件对象
+delimiter: ,              // 可选，CSV分隔符，默认为逗号
+hasHeader: true           // 可选，是否有表头，默认为true
+encoding: utf-8           // 可选，文件编码，默认为utf-8
+dbName: csv_data          // 可选，MongoDB数据库名
+collName: customers       // 可选，MongoDB集合名
+```
+
+**响应**:
+```
 {
   "host": "localhost",                     // MongoDB主机地址
   "port": 27017,                           // MongoDB端口
@@ -196,6 +215,8 @@ Content-Type: application/json
   }
 }
 ```
+
+**功能增强**: 支持直接上传CSV文件并导入MongoDB，无需先调用上传API再调用导入API，简化了操作流程。
 
 **注意**: 导入后的数据将保存在本地MongoDB数据库中，可通过MongoDB连接API直接访问数据。
 
