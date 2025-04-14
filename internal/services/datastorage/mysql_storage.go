@@ -121,10 +121,55 @@ func (s *MySQLStorage) GenerateConnectionInfo() (*MySQLConnectionInfo, error) {
 		}
 		columnsRows.Close()
 
-		// 添加表信息 - 暂不获取样本数据以简化实现
+		// 获取样本数据
+		sampleData := "{}"
+		sampleRow, err := s.db.Query(fmt.Sprintf("SELECT * FROM %s LIMIT 1", tableName))
+		if err == nil {
+			if sampleRow.Next() {
+				// 获取列名
+				columns, err := sampleRow.Columns()
+				if err == nil {
+					// 准备扫描目标
+					values := make([]interface{}, len(columns))
+					scanArgs := make([]interface{}, len(columns))
+					for i := range values {
+						scanArgs[i] = &values[i]
+					}
+
+					// 扫描一行数据
+					if err := sampleRow.Scan(scanArgs...); err == nil {
+						// 构建样本数据
+						sampleMap := make(map[string]interface{})
+						for i, col := range columns {
+							val := values[i]
+							if val == nil {
+								sampleMap[col] = nil
+								continue
+							}
+
+							// 根据类型进行转换
+							switch v := val.(type) {
+							case []byte:
+								sampleMap[col] = string(v)
+							default:
+								sampleMap[col] = v
+							}
+						}
+
+						// 转换为JSON字符串
+						if sampleBytes, err := json.Marshal(sampleMap); err == nil {
+							sampleData = string(sampleBytes)
+						}
+					}
+				}
+			}
+			sampleRow.Close()
+		}
+
+		// 添加表信息
 		connInfo.Tables[tableName] = TableInformation{
 			Fields:     fields,
-			SampleData: "{}",
+			SampleData: sampleData,
 		}
 	}
 

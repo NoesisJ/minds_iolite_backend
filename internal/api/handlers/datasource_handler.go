@@ -274,24 +274,28 @@ func (h *DataSourceHandler) UploadCSVFile(c *gin.Context) {
 
 		// 获取配置信息的保存路径 - 修改为保存在可执行文件所在目录的data子目录
 		// 获取当前工作目录
-		wd, err := os.Getwd()
+		// 获取可执行文件所在目录
+		exePath, err := os.Executable()
 		if err != nil {
-			log.Printf("警告: 无法获取当前工作目录: %v", err)
+			log.Printf("警告: 无法获取可执行文件路径: %v", err)
 		} else {
-			// 设置config.json保存在当前目录的data目录
-			dataDir := filepath.Join(wd, "data")
+			// 获取可执行文件的目录
+			exeDir := filepath.Dir(exePath)
+
+			// 设置 config.json 保存在可执行文件目录的 data 子目录中
+			dataDir := filepath.Join(exeDir, "data")
 			configPath := filepath.Join(dataDir, "config.json")
 
-			// 确保data目录存在
+			// 确保 data 目录存在
 			if err := os.MkdirAll(dataDir, 0755); err != nil {
-				log.Printf("警告: 无法创建data目录: %v", err)
+				log.Printf("警告: 无法创建 data 目录: %v", err)
 			} else {
-				// 将配置信息保存到config.json
+				// 将配置信息保存到 config.json
 				configData, err := json.MarshalIndent(connInfo, "", "  ")
 				if err != nil {
 					log.Printf("警告: 无法序列化配置数据: %v", err)
 				} else {
-					if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+					if err := os.WriteFile(configPath, configData, 0644); err != nil {
 						log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
 					} else {
 						log.Printf("已将配置信息保存到: %s", configPath)
