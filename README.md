@@ -226,6 +226,9 @@ collName: customers       // 可选，MongoDB集合名
 
 **使用场景**: 访问已存在的MongoDB数据库，将其中的数据提供给前端展示或分析。
 
+**支持两种连接格式**:
+
+1. **使用完整连接URI**:
 ```
 POST /api/datasource/mongodb/connect
 Content-Type: application/json
@@ -235,8 +238,25 @@ Content-Type: application/json
   "ConnectionURI": "mongodb://localhost:27017",  // MongoDB连接URI
   "Database": "database_name"                    // 要连接的数据库名
 }
+```
 
-响应:
+2. **使用独立的连接参数**:
+```
+POST /api/datasource/mongodb/connect
+Content-Type: application/json
+
+请求体:
+{
+  "host": "localhost",       // MongoDB服务器主机
+  "port": 27017,             // 端口号，可选，默认27017
+  "username": "admin",       // 用户名，可选
+  "password": "password",    // 密码，可选
+  "database": "database_name" // 数据库名
+}
+```
+
+**响应**:
+```
 {
   "host": "localhost",                         // 数据库主机
   "port": 27017,                               // 数据库端口
@@ -265,7 +285,10 @@ Content-Type: application/json
 }
 ```
 
-**注意**: 连接URI支持所有标准MongoDB连接字符串参数，包括认证信息、复制集配置等。
+**特性**:
+- 连接URI支持所有标准MongoDB连接字符串参数，包括认证信息、复制集配置等
+- 字段名称不区分大小写，例如`ConnectionURI`/`connectionURI`/`connectionuri`都有效
+- 端口号支持字符串和数字格式
 
 ### 3. MySQL连接
 

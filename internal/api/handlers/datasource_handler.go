@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"minds_iolite_backend/internal/datasource/providers/csv"
@@ -497,21 +499,111 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 
 // ConnectToMongoDB 处理MongoDB连接请求
 func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
+	// 支持两种请求格式：1. ConnectionURI + Database, 2. host + port + username + password + database
 	var request struct {
-		ConnectionURI string `json:"ConnectionURI"`
-		Database      string `json:"Database" binding:"required"`
+		// 首选格式（原有格式）
+		ConnectionURI string `json:"ConnectionURI" binding:"omitempty"`
+		Database      string `json:"Database" binding:"omitempty"`
+
+		// 备用格式（与MySQL保持一致）
+		Host     string      `json:"host" binding:"omitempty"`
+		Port     interface{} `json:"port" binding:"omitempty"` // 支持字符串或数字
+		Username string      `json:"username" binding:"omitempty"`
+		Password string      `json:"password" binding:"omitempty"`
+		DbName   string      `json:"database" binding:"omitempty"`
 	}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
+	// 支持字段大小写不敏感
+	var rawData map[string]interface{}
+	if err := c.ShouldBindJSON(&rawData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"error":   "无效的请求参数: " + err.Error(),
+			"error":   "无效的请求格式: " + err.Error(),
 		})
 		return
 	}
 
-	// 设置默认连接URI（如果未提供）
+	// 尝试从原始数据中提取关键字段（不区分大小写）
+	for key, value := range rawData {
+		lowerKey := strings.ToLower(key)
+		switch lowerKey {
+		case "connectionuri", "connection_uri", "connection":
+			if strValue, ok := value.(string); ok {
+				request.ConnectionURI = strValue
+			}
+		case "database", "db", "dbname":
+			if strValue, ok := value.(string); ok {
+				if request.Database == "" { // 优先使用Database字段
+					request.Database = strValue
+				}
+				if request.DbName == "" { // 备用使用database字段
+					request.DbName = strValue
+				}
+			}
+		case "host":
+			if strValue, ok := value.(string); ok {
+				request.Host = strValue
+			}
+		case "port":
+			request.Port = value // 可以是字符串或数字
+		case "username", "user":
+			if strValue, ok := value.(string); ok {
+				request.Username = strValue
+			}
+		case "password", "pwd", "passwd":
+			if strValue, ok := value.(string); ok {
+				request.Password = strValue
+			}
+		}
+	}
+
+	// 确保有数据库名
+	dbName := request.Database
+	if dbName == "" {
+		dbName = request.DbName
+	}
+	if dbName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "缺少必要参数: 数据库名",
+		})
+		return
+	}
+
+	// 构建连接URI
 	uri := request.ConnectionURI
+	if uri == "" && request.Host != "" {
+		// 从独立字段构建连接字符串
+		portStr := "27017" // 默认端口
+
+		// 处理端口值（可能是字符串或数字）
+		if request.Port != nil {
+			switch v := request.Port.(type) {
+			case string:
+				portStr = v
+			case float64:
+				portStr = fmt.Sprintf("%d", int(v))
+			case int:
+				portStr = fmt.Sprintf("%d", v)
+			}
+		}
+
+		// 构建基本连接字符串
+		uri = fmt.Sprintf("mongodb://%s:%s", request.Host, portStr)
+
+		// 如果有用户名和密码，添加到URI
+		if request.Username != "" {
+			if request.Password != "" {
+				uri = fmt.Sprintf("mongodb://%s:%s@%s:%s",
+					request.Username, request.Password, request.Host, portStr)
+			} else {
+				uri = fmt.Sprintf("mongodb://%s@%s:%s",
+					request.Username, request.Host, portStr)
+			}
+		}
+	}
+
+	// 设置默认连接URI（如果都未提供）
 	if uri == "" {
 		uri = "mongodb://localhost:27017"
 	}
@@ -528,7 +620,7 @@ func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
 	defer connector.Close()
 
 	// 提取连接信息
-	connInfo, err := connector.ExtractConnectionInfo(request.Database)
+	connInfo, err := connector.ExtractConnectionInfo(dbName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -579,6 +671,26 @@ func (h *DataSourceHandler) ConnectToMySQL(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
+		// 检查是否可能是端口类型错误
+		var rawData map[string]interface{}
+		if bindErr := c.ShouldBindJSON(&rawData); bindErr == nil {
+			// 尝试从原始数据中获取端口值并转换
+			if portVal, ok := rawData["port"]; ok {
+				// 如果是字符串类型，尝试转换为整数
+				if portStr, isStr := portVal.(string); isStr {
+					if portNum, err := strconv.Atoi(portStr); err == nil {
+						request.Port = portNum
+						request.Host = rawData["host"].(string)
+						request.Username = rawData["username"].(string)
+						request.Password = rawData["password"].(string)
+						request.Database = rawData["database"].(string)
+						// 修正了端口，继续处理
+						goto ProcessRequest
+					}
+				}
+			}
+		}
+
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"error":   "无效的请求参数: " + err.Error(),
@@ -586,6 +698,7 @@ func (h *DataSourceHandler) ConnectToMySQL(c *gin.Context) {
 		return
 	}
 
+ProcessRequest:
 	// 创建MySQL存储服务
 	storage, err := datastorage.NewMySQLStorage(
 		request.Host,
