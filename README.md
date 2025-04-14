@@ -453,3 +453,57 @@ Content-Type: application/json
   "error": "错误信息描述"
 }
 ```
+
+## 重要说明
+
+### config.json文件生成
+
+所有数据源连接API（包括MongoDB连接、MySQL连接、SQLite处理和CSV导入）都会在应用程序当前目录的`data`子目录下自动生成`config.json`文件。该文件包含最近一次成功连接的数据源信息，可用于：
+
+1. 快速重连到上次使用的数据源
+2. 在前端界面中显示连接信息
+3. 作为不同数据源之间的配置传递媒介
+
+文件路径：`./data/config.json`
+
+示例内容（MongoDB连接）：
+```json
+{
+  "host": "localhost",
+  "port": 27017,
+  "username": "",
+  "password": "",
+  "database": "test_db",
+  "collections": {
+    "users": {
+      "fields": {
+        "_id": "ObjectId",
+        "name": "str",
+        "age": "int"
+      },
+      "sample_data": "{\"_id\": \"60d21b4667d0d8992e610c85\", \"name\": \"张三\", \"age\": 30}"
+    }
+  }
+}
+```
+
+示例内容（MySQL连接）：
+```json
+{
+  "host": "localhost",
+  "port": 3306,
+  "username": "root",
+  "password": "",
+  "database": "test_db",
+  "tables": {
+    "users": {
+      "fields": {
+        "id": "int",
+        "name": "str",
+        "age": "int"
+      },
+      "sample_data": "{\"id\": 1, \"name\": \"张三\", \"age\": 30}"
+    }
+  }
+}
+```

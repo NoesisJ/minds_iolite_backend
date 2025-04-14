@@ -2,10 +2,9 @@
   "host": "localhost",
   "port": 27017,
   "username": "",
-  "password": "",
-  "database": "csv_data",
+  "database": "csv_customers",
   "collections": {
-    "customers": {
+    "data": {
       "fields": {
         "_id": "ObjectId",
         "age": "int",
@@ -15,9 +14,9 @@
         "id": "int",
         "is_active": "bool",
         "name": "str",
-        "registration_date": "date"
+        "registration_date": "unknown"
       },
-      "sample_data": "{\"_id\":\"67fbd2ed3ad3708e174f5b68\",\"age\":35,\"city\":\"北京\",\"credit_score\":720,\"email\":\"zhangsan@example.com\",\"id\":1,\"is_active\":true,\"name\":\"张三\",\"registration_date\":\"2022-01-15T00:00:00Z\"}"
+      "sample_data": "{\"_id\":\"67fa0dd9320a28b9e289eca4\",\"age\":35,\"city\":\"北京\",\"credit_score\":720,\"email\":\"zhangsan@example.com\",\"id\":1,\"is_active\":true,\"name\":\"张三\",\"registration_date\":\"2022-01-15T00:00:00Z\"}"
     }
   }
 }

@@ -190,6 +190,7 @@ func (h *DataSourceHandler) UploadCSVFile(c *gin.Context) {
 	// 获取选项
 	delimiter := c.DefaultPostForm("delimiter", ",")
 	hasHeader := c.DefaultPostForm("hasHeader", "true") == "true"
+	encoding := c.DefaultPostForm("encoding", "utf-8")
 
 	// 获取MongoDB导入参数
 	importToMongo := c.DefaultPostForm("importToMongo", "false") == "true"
@@ -200,6 +201,7 @@ func (h *DataSourceHandler) UploadCSVFile(c *gin.Context) {
 	csvSource := datasource.NewCSVSource(tempPath)
 	csvSource.Delimiter = delimiter
 	csvSource.HasHeader = hasHeader
+	csvSource.Encoding = encoding
 
 	// 验证数据源
 	if err := csvSource.Validate(); err != nil {
@@ -535,6 +537,33 @@ func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
 		return
 	}
 
+	// 获取当前工作目录
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Printf("警告: 无法获取当前工作目录: %v", err)
+	} else {
+		// 设置config.json保存在当前目录的data目录
+		dataDir := filepath.Join(wd, "data")
+		configPath := filepath.Join(dataDir, "config.json")
+
+		// 确保data目录存在
+		if err := os.MkdirAll(dataDir, 0755); err != nil {
+			log.Printf("警告: 无法创建data目录: %v", err)
+		} else {
+			// 将配置信息保存到config.json
+			configData, err := json.MarshalIndent(connInfo, "", "  ")
+			if err != nil {
+				log.Printf("警告: 无法序列化配置数据: %v", err)
+			} else {
+				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
+				} else {
+					log.Printf("已将配置信息保存到: %s", configPath)
+				}
+			}
+		}
+	}
+
 	// 直接返回连接信息，不包含success和connectionInfo包装
 	c.JSON(http.StatusOK, connInfo)
 }
@@ -582,6 +611,33 @@ func (h *DataSourceHandler) ConnectToMySQL(c *gin.Context) {
 			"error":   "获取数据库信息失败: " + err.Error(),
 		})
 		return
+	}
+
+	// 获取当前工作目录
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Printf("警告: 无法获取当前工作目录: %v", err)
+	} else {
+		// 设置config.json保存在当前目录的data目录
+		dataDir := filepath.Join(wd, "data")
+		configPath := filepath.Join(dataDir, "config.json")
+
+		// 确保data目录存在
+		if err := os.MkdirAll(dataDir, 0755); err != nil {
+			log.Printf("警告: 无法创建data目录: %v", err)
+		} else {
+			// 将配置信息保存到config.json
+			configData, err := json.MarshalIndent(connInfo, "", "  ")
+			if err != nil {
+				log.Printf("警告: 无法序列化配置数据: %v", err)
+			} else {
+				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
+				} else {
+					log.Printf("已将配置信息保存到: %s", configPath)
+				}
+			}
+		}
 	}
 
 	// 直接返回连接信息，不包含success和connectionInfo包装
@@ -644,11 +700,35 @@ func (h *DataSourceHandler) ProcessSQLiteFile(c *gin.Context) {
 		return
 	}
 
+	// 获取当前工作目录
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Printf("警告: 无法获取当前工作目录: %v", err)
+	} else {
+		// 设置config.json保存在当前目录的data目录
+		dataDir := filepath.Join(wd, "data")
+		configPath := filepath.Join(dataDir, "config.json")
+
+		// 确保data目录存在
+		if err := os.MkdirAll(dataDir, 0755); err != nil {
+			log.Printf("警告: 无法创建data目录: %v", err)
+		} else {
+			// 将配置信息保存到config.json
+			configData, err := json.MarshalIndent(connInfo, "", "  ")
+			if err != nil {
+				log.Printf("警告: 无法序列化配置数据: %v", err)
+			} else {
+				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
+				} else {
+					log.Printf("已将配置信息保存到: %s", configPath)
+				}
+			}
+		}
+	}
+
 	// 返回结果
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data":    connInfo,
-	})
+	c.JSON(http.StatusOK, connInfo)
 }
 
 // ImportSQLiteToMongoDB 将SQLite数据导入MongoDB
@@ -693,18 +773,28 @@ func (h *DataSourceHandler) ImportSQLiteToMongoDB(c *gin.Context) {
 	}
 	defer storage.Close()
 
-	// 设置默认MongoDB连接URI
+	// 设置默认的MongoDB连接参数
 	mongoURI := request.MongoURI
 	if mongoURI == "" {
 		mongoURI = "mongodb://localhost:27017"
 	}
 
+	dbName := request.DatabaseName
+	if dbName == "" {
+		dbName = "sqlite_import"
+	}
+
+	collName := request.CollectionName
+	if collName == "" {
+		collName = request.Table
+	}
+
 	// 导入数据到MongoDB
 	connInfo, err := storage.ImportSQLiteToMongoDB(
-		request.Table,
-		request.DatabaseName,
-		request.CollectionName,
 		mongoURI,
+		dbName,
+		collName,
+		request.Table,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -714,10 +804,33 @@ func (h *DataSourceHandler) ImportSQLiteToMongoDB(c *gin.Context) {
 		return
 	}
 
+	// 获取当前工作目录
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Printf("警告: 无法获取当前工作目录: %v", err)
+	} else {
+		// 设置config.json保存在当前目录的data目录
+		dataDir := filepath.Join(wd, "data")
+		configPath := filepath.Join(dataDir, "config.json")
+
+		// 确保data目录存在
+		if err := os.MkdirAll(dataDir, 0755); err != nil {
+			log.Printf("警告: 无法创建data目录: %v", err)
+		} else {
+			// 将配置信息保存到config.json
+			configData, err := json.MarshalIndent(connInfo, "", "  ")
+			if err != nil {
+				log.Printf("警告: 无法序列化配置数据: %v", err)
+			} else {
+				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
+				} else {
+					log.Printf("已将配置信息保存到: %s", configPath)
+				}
+			}
+		}
+	}
+
 	// 返回结果
-	c.JSON(http.StatusOK, gin.H{
-		"success":        true,
-		"connectionInfo": connInfo,
-		"message":        "SQLite数据已成功导入到MongoDB",
-	})
+	c.JSON(http.StatusOK, connInfo)
 }
