@@ -2,6 +2,7 @@ package routes
 
 import (
 	"minds_iolite_backend/internal/api/handlers"
+	sessionHandlers "minds_iolite_backend/internal/handlers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,6 +11,10 @@ import (
 func SetupDataSourceRoutes(router *gin.Engine) {
 	// 创建数据源处理器
 	dataSourceHandler := handlers.NewDataSourceHandler()
+
+	// 创建会话处理器并初始化会话管理器
+	sessionHandler := sessionHandlers.NewSessionHandler()
+	sessionHandlers.InitSessionManager()
 
 	// 数据源API路由组
 	dataSourceGroup := router.Group("/api/datasource")
@@ -53,5 +58,24 @@ func SetupDataSourceRoutes(router *gin.Engine) {
 			// 导入SQLite到MongoDB
 			sqliteGroup.POST("/import-to-mongo", dataSourceHandler.ImportSQLiteToMongoDB)
 		}
+	}
+
+	// 持久会话API路由组
+	sessionsGroup := router.Group("/api/sessions")
+	{
+		// 创建会话
+		sessionsGroup.POST("", sessionHandler.CreateSession)
+
+		// 获取所有会话
+		sessionsGroup.GET("", sessionHandler.GetAllSessions)
+
+		// 获取特定会话
+		sessionsGroup.GET("/:sessionId", sessionHandler.GetSession)
+
+		// 刷新会话
+		sessionsGroup.PUT("/:sessionId/refresh", sessionHandler.RefreshSession)
+
+		// 关闭会话
+		sessionsGroup.DELETE("/:sessionId", sessionHandler.CloseSession)
 	}
 }
