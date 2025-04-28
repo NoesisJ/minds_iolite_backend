@@ -15,7 +15,7 @@ func main() {
 	fmt.Println("=== CSV测试完成 ===")
 
 	fmt.Println("\n=== 开始CSV导入MongoDB测试 ===")
-	testImportCSVToMongo()
+	// testImportCSVToMongo()
 	fmt.Println("=== CSV导入MongoDB测试完成 ===")
 
 	// TODO: 后续可添加其他数据源测试

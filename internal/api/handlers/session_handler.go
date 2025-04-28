@@ -42,7 +42,7 @@ type CreateSessionRequest struct {
 }
 
 // CreateSession 创建新的持久连接会话
-func CreateSession(c *gin.Context) {
+func (h *SessionHandler) CreateSession(c *gin.Context) {
 	var req CreateSessionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "无效的请求数据: " + err.Error()})
@@ -114,7 +114,7 @@ func CreateSession(c *gin.Context) {
 }
 
 // GetSession 获取特定会话的信息
-func GetSession(c *gin.Context) {
+func (h *SessionHandler) GetSession(c *gin.Context) {
 	sessionID := c.Param("sessionId")
 	if sessionID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "未提供会话ID"})
@@ -134,7 +134,7 @@ func GetSession(c *gin.Context) {
 }
 
 // GetAllSessions 获取所有活动会话
-func GetAllSessions(c *gin.Context) {
+func (h *SessionHandler) GetAllSessions(c *gin.Context) {
 	sessions := sessionManager.GetAllSessions()
 	c.JSON(http.StatusOK, gin.H{
 		"success":  true,
@@ -143,7 +143,7 @@ func GetAllSessions(c *gin.Context) {
 }
 
 // RefreshSession 刷新会话
-func RefreshSession(c *gin.Context) {
+func (h *SessionHandler) RefreshSession(c *gin.Context) {
 	sessionID := c.Param("sessionId")
 	if sessionID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "未提供会话ID"})
@@ -164,7 +164,7 @@ func RefreshSession(c *gin.Context) {
 }
 
 // CloseSession 关闭会话
-func CloseSession(c *gin.Context) {
+func (h *SessionHandler) CloseSession(c *gin.Context) {
 	sessionID := c.Param("sessionId")
 	if sessionID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "未提供会话ID"})

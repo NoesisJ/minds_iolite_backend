@@ -1,308 +1,311 @@
 {
-  "host": "tarsgo.com",
-  "port": 3306,
-  "username": "tarsgo",
-  "database": "tarsgo",
-  "tables": {
-    "Article": {
-      "fields": {
-        "ID": "int",
-        "classification": "str",
-        "content": "str",
-        "images": "str",
-        "nickname": "str",
-        "time": "str",
-        "title": "str"
+  "mysql": {
+    "database": "tarsgo",
+    "host": "tarsgo.com",
+    "password": "2c09594457524e5979554033",
+    "port": 3306,
+    "tables": {
+      "Article": {
+        "fields": {
+          "ID": "int",
+          "classification": "str",
+          "content": "str",
+          "images": "str",
+          "nickname": "str",
+          "time": "str",
+          "title": "str"
+        },
+        "sample_data": "{\"ID\":19,\"classification\":\"活动\",\"content\":\"南岭杏花节活动总结\\n                                负责人:何佳悦\\n一、准备阶段(时间4月8日-4月15日）\\n1. 4月8日晚:组长刘佳奇学姐分配任务，确定分工，由何佳悦同学负责排班，由于杏花节时间尚未确定，故排班三次\\n2.4月11晚安排第一次彩排(4月12日早8:50），组建机器人分队QQ群，联系通信工程学院杏花节负责老师，3名s1负责机器人同学进行彩排，确定花车巡游大概流程。\\n4月11日联系文学院负责人，组织策划活动，由文学院出诗句，何佳悦打印及打印标签。\\n3.4月12日统计花车巡游负责同学空闲时间，确定4月13日2:30-4:30，19:00－20:30在创客空间进行排练(包括如何操作，调试，排队形)\\n4.4月14日找2名负责s1机器人进行调试，自行制作靶子(背景应用吉甲元素及文学院元素），安排安琪打印社制作。\\n5.与玄老师沟通，可将老英雄，药盒奖状运到南岭校区，借吉甲队服在花车巡游时穿。\\n二、百团纳新(4月15日)\\n1.  4月14日与老师沟通在前卫的百团纳新中增设老英雄机器人，安排南区两名同学于4月15日早10点进行搬运\\n2.安排百团纳新早7点，何佳悦、龚博文和李海齐将南岭4辆s1机器人，10个靶子，7个小矿石，3000张宣传单带到南卫校区，组织同学现场实操机器人，获得手环，介绍吉甲大师梦工场社团，并及时将电池充电。并于11:30将上述南岭物资带回南岭校区\\n三、物资运输\\n1.4月13日中午杨好，章紫嫣负责通过货拉拉将ai机器人运到创客空间\\n2.4月15日早7点半何佳悦、龚博文和李海齐将南岭4辆s1机器人，10个靶子，7个小矿石，3000张宣传单带到南卫校区，\\n3.4月15日晚17点赵天培，邢浩泽乘货拉拉将老英雄机器人运到创客空间\\n4.4月15日晚杨好，何佳悦，吴子豪，宫硕到南湖校区，何佳悦，吴子豪，宫硕将4件队服，奖状，奖杯，显微镜，两块s1电池,1个充电器(已做好登记），1块ai车电池运到创客空间\\n5.4月16日早9:00何厚良学长负责将药瓶，4个借好的小推车(何佳悦联系通信工程学院杏花节负责的老师借的)通过货拉拉运输到南岭校区\\n6.4月16日下午15:30何厚良学长负责将药瓶，ai车，4个小推车，显微镜(被子没带)通过货拉拉运输到南湖校区\\n7.4月16日下午17:00何佳悦负责将物资统计，将杨好等4名南湖同学将5个s1机器人，7块电池，5个充电器(何晨曦的没找到)，4件队服(何晨曦4月17日自行送到南湖），5个奖状，1个奖牌，被子，1个大电池\\n补充:何晨曦已于4月17日将队服，2瓶水晶弹，10个靶子送到南湖校区\\n四、杏花节(4月16日)\\n1.早7点安排6名同学到帐篷集合搬桌椅\\n2.8:00－9:30运输物资，9:30花着巡游同学就位，10:30花车巡游结束，到达帐篷组织游戏，两名同学接受电视台等采访\\n3.11:55－12:10舞台展示5个s1机器人上场，何佳悦主持活动\\n4.12:10－16:30组织同学操作机器人\\n5.16:30－18:00整理安排运输物资\\n五、人员分配\\n1. 总负责人：何佳悦\\n2. S1机器人：邢浩泽，赵天培，龚博文，李海齐，何晨曦\\n3. 工程车：吴子豪、宫硕\\n4. 展台、协同组织游戏活动：周昊燃、陈力进、孙健皓、穆子圣\\n六、活动出现问题及注意事项\\n1.按时到场，安排好时间，不要迟到(1名同学迟到2个半小时，一直打电话不接)\\n2.物资统一放到创客空间(比如s1机器人，充电器，电池等)\\n3.统一听从管理(1名同学未经同意把创客4个奖状于早上8点拿到帐篷处)\\n4.管理，准备好自己负责的物资，不要丢东西(1名同学充电器未找到，提前泡好水晶弹等)\\n5.保持通讯畅通(如:打多次电话不接，联系不上)\\n6.尽量合理分配人员，时间(此次见下图)，\\n  可以分为上下午两场，人员平均分配，最好不要出现很多人待一天的情况\\n7.在摊位上的同学尽量更多的向同学们介绍社团，及纳新相关的问题(①有的同学拿着一摞宣传单，到最后也没发出去，②要积极主动，不要让路过的同学问到才发传单③尽量站在人流量多的地方，不要站在树林拿着传单)\\n\",\"images\":\"[{\\\"name\\\":\\\"83741112_582256a667c2fe201f616a090b3d2d57_1681995927313.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6/83741112_582256a667c2fe201f616a090b3d2d57_1681995927313.jpg\\\",\\\"uid\\\":1681995930077,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"93275375_371361ee5e1768b6dfea726a75d5361f_1681997166390.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/93275375_371361ee5e1768b6dfea726a75d5361f_1681997166390.jpg\\\",\\\"uid\\\":1681997167260,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"69450565_582256a667c2fe201f616a090b3d2d57_1681997189399.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/69450565_582256a667c2fe201f616a090b3d2d57_1681997189399.jpg\\\",\\\"uid\\\":1681997189947,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"33259765_e017cc57c61c29baa664e18fe8a14902_1681997384661.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/33259765_e017cc57c61c29baa664e18fe8a14902_1681997384661.jpg\\\",\\\"uid\\\":1681997385412,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"42489490_32e96ad4a2ab00bc3ed3e75e1d6615f5_1681997403952.png\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/42489490_32e96ad4a2ab00bc3ed3e75e1d6615f5_1681997403952.png\\\",\\\"uid\\\":1681997404718,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"79740499_b5b276df807ce8b7b16e475f385838c4_1681997470707.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/79740499_b5b276df807ce8b7b16e475f385838c4_1681997470707.jpg\\\",\\\"uid\\\":1681997471175,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"85980104_3ed16782f30576a244fe6e25ee37106b_1681997601773.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/85980104_3ed16782f30576a244fe6e25ee37106b_1681997601773.jpg\\\",\\\"uid\\\":1681997602776,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"56288588_77967c2cd01ca26a0ea2903b14c9d4b8_1681997619063.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/56288588_77967c2cd01ca26a0ea2903b14c9d4b8_1681997619063.jpg\\\",\\\"uid\\\":1681997619884,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"49793889_6dd0fd89ac3052ec4d575cbe74c8f21d_1681997634059.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/49793889_6dd0fd89ac3052ec4d575cbe74c8f21d_1681997634059.jpg\\\",\\\"uid\\\":1681997634725,\\\"status\\\":\\\"success\\\"}]\",\"nickname\":\"何佳悦 邢浩泽 赵天培 周昊燃 杨好 宫硕 龚博文 李海齐 吴子豪 陈力进 孙健皓 穆子圣 章紫嫣 何晨曦 龙腾\",\"time\":\"2023-04-16\",\"title\":\"南岭杏花节\"}"
       },
-      "sample_data": "{\"ID\":19,\"classification\":\"活动\",\"content\":\"南岭杏花节活动总结\\n                                负责人:何佳悦\\n一、准备阶段(时间4月8日-4月15日）\\n1. 4月8日晚:组长刘佳奇学姐分配任务，确定分工，由何佳悦同学负责排班，由于杏花节时间尚未确定，故排班三次\\n2.4月11晚安排第一次彩排(4月12日早8:50），组建机器人分队QQ群，联系通信工程学院杏花节负责老师，3名s1负责机器人同学进行彩排，确定花车巡游大概流程。\\n4月11日联系文学院负责人，组织策划活动，由文学院出诗句，何佳悦打印及打印标签。\\n3.4月12日统计花车巡游负责同学空闲时间，确定4月13日2:30-4:30，19:00－20:30在创客空间进行排练(包括如何操作，调试，排队形)\\n4.4月14日找2名负责s1机器人进行调试，自行制作靶子(背景应用吉甲元素及文学院元素），安排安琪打印社制作。\\n5.与玄老师沟通，可将老英雄，药盒奖状运到南岭校区，借吉甲队服在花车巡游时穿。\\n二、百团纳新(4月15日)\\n1.  4月14日与老师沟通在前卫的百团纳新中增设老英雄机器人，安排南区两名同学于4月15日早10点进行搬运\\n2.安排百团纳新早7点，何佳悦、龚博文和李海齐将南岭4辆s1机器人，10个靶子，7个小矿石，3000张宣传单带到南卫校区，组织同学现场实操机器人，获得手环，介绍吉甲大师梦工场社团，并及时将电池充电。并于11:30将上述南岭物资带回南岭校区\\n三、物资运输\\n1.4月13日中午杨好，章紫嫣负责通过货拉拉将ai机器人运到创客空间\\n2.4月15日早7点半何佳悦、龚博文和李海齐将南岭4辆s1机器人，10个靶子，7个小矿石，3000张宣传单带到南卫校区，\\n3.4月15日晚17点赵天培，邢浩泽乘货拉拉将老英雄机器人运到创客空间\\n4.4月15日晚杨好，何佳悦，吴子豪，宫硕到南湖校区，何佳悦，吴子豪，宫硕将4件队服，奖状，奖杯，显微镜，两块s1电池,1个充电器(已做好登记），1块ai车电池运到创客空间\\n5.4月16日早9:00何厚良学长负责将药瓶，4个借好的小推车(何佳悦联系通信工程学院杏花节负责的老师借的)通过货拉拉运输到南岭校区\\n6.4月16日下午15:30何厚良学长负责将药瓶，ai车，4个小推车，显微镜(被子没带)通过货拉拉运输到南湖校区\\n7.4月16日下午17:00何佳悦负责将物资统计，将杨好等4名南湖同学将5个s1机器人，7块电池，5个充电器(何晨曦的没找到)，4件队服(何晨曦4月17日自行送到南湖），5个奖状，1个奖牌，被子，1个大电池\\n补充:何晨曦已于4月17日将队服，2瓶水晶弹，10个靶子送到南湖校区\\n四、杏花节(4月16日)\\n1.早7点安排6名同学到帐篷集合搬桌椅\\n2.8:00－9:30运输物资，9:30花着巡游同学就位，10:30花车巡游结束，到达帐篷组织游戏，两名同学接受电视台等采访\\n3.11:55－12:10舞台展示5个s1机器人上场，何佳悦主持活动\\n4.12:10－16:30组织同学操作机器人\\n5.16:30－18:00整理安排运输物资\\n五、人员分配\\n1. 总负责人：何佳悦\\n2. S1机器人：邢浩泽，赵天培，龚博文，李海齐，何晨曦\\n3. 工程车：吴子豪、宫硕\\n4. 展台、协同组织游戏活动：周昊燃、陈力进、孙健皓、穆子圣\\n六、活动出现问题及注意事项\\n1.按时到场，安排好时间，不要迟到(1名同学迟到2个半小时，一直打电话不接)\\n2.物资统一放到创客空间(比如s1机器人，充电器，电池等)\\n3.统一听从管理(1名同学未经同意把创客4个奖状于早上8点拿到帐篷处)\\n4.管理，准备好自己负责的物资，不要丢东西(1名同学充电器未找到，提前泡好水晶弹等)\\n5.保持通讯畅通(如:打多次电话不接，联系不上)\\n6.尽量合理分配人员，时间(此次见下图)，\\n  可以分为上下午两场，人员平均分配，最好不要出现很多人待一天的情况\\n7.在摊位上的同学尽量更多的向同学们介绍社团，及纳新相关的问题(①有的同学拿着一摞宣传单，到最后也没发出去，②要积极主动，不要让路过的同学问到才发传单③尽量站在人流量多的地方，不要站在树林拿着传单)\\n\",\"images\":\"[{\\\"name\\\":\\\"83741112_582256a667c2fe201f616a090b3d2d57_1681995927313.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6/83741112_582256a667c2fe201f616a090b3d2d57_1681995927313.jpg\\\",\\\"uid\\\":1681995930077,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"93275375_371361ee5e1768b6dfea726a75d5361f_1681997166390.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/93275375_371361ee5e1768b6dfea726a75d5361f_1681997166390.jpg\\\",\\\"uid\\\":1681997167260,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"69450565_582256a667c2fe201f616a090b3d2d57_1681997189399.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/69450565_582256a667c2fe201f616a090b3d2d57_1681997189399.jpg\\\",\\\"uid\\\":1681997189947,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"33259765_e017cc57c61c29baa664e18fe8a14902_1681997384661.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/33259765_e017cc57c61c29baa664e18fe8a14902_1681997384661.jpg\\\",\\\"uid\\\":1681997385412,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"42489490_32e96ad4a2ab00bc3ed3e75e1d6615f5_1681997403952.png\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/42489490_32e96ad4a2ab00bc3ed3e75e1d6615f5_1681997403952.png\\\",\\\"uid\\\":1681997404718,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"79740499_b5b276df807ce8b7b16e475f385838c4_1681997470707.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/79740499_b5b276df807ce8b7b16e475f385838c4_1681997470707.jpg\\\",\\\"uid\\\":1681997471175,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"85980104_3ed16782f30576a244fe6e25ee37106b_1681997601773.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/85980104_3ed16782f30576a244fe6e25ee37106b_1681997601773.jpg\\\",\\\"uid\\\":1681997602776,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"56288588_77967c2cd01ca26a0ea2903b14c9d4b8_1681997619063.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/56288588_77967c2cd01ca26a0ea2903b14c9d4b8_1681997619063.jpg\\\",\\\"uid\\\":1681997619884,\\\"status\\\":\\\"success\\\"},{\\\"name\\\":\\\"49793889_6dd0fd89ac3052ec4d575cbe74c8f21d_1681997634059.jpg\\\",\\\"url\\\":\\\"http://tarsgo.oss-cn-chengdu.aliyuncs.com/TARSGO/Articles/2023-04-17/%E4%BD%95%E4%BD%B3%E6%82%A6%20%E9%82%A2%E6%B5%A9%E6%B3%BD%20%E8%B5%B5%E5%A4%A9%E5%9F%B9%20%E5%91%A8%E6%98%8A%E7%87%83%20%E6%9D%A8%E5%A5%BD%20%E5%AE%AB%E7%A1%95%20%E9%BE%9A%E5%8D%9A%E6%96%87%20%E6%9D%8E%E6%B5%B7%E9%BD%90%20%E5%90%B4%E5%AD%90%E8%B1%AA%20%E9%99%88%E5%8A%9B%E8%BF%9B%20%E5%AD%99%E5%81%A5%E7%9A%93%20%E7%A9%86%E5%AD%90%E5%9C%A3%20%E7%AB%A0%E7%B4%AB%E5%AB%A3%20%E4%BD%95%E6%99%A8%E6%9B%A6/49793889_6dd0fd89ac3052ec4d575cbe74c8f21d_1681997634059.jpg\\\",\\\"uid\\\":1681997634725,\\\"status\\\":\\\"success\\\"}]\",\"nickname\":\"何佳悦 邢浩泽 赵天培 周昊燃 杨好 宫硕 龚博文 李海齐 吴子豪 陈力进 孙健皓 穆子圣 章紫嫣 何晨曦 龙腾\",\"time\":\"2023-04-16\",\"title\":\"南岭杏花节\"}"
+      "Data": {
+        "fields": {
+          "ID": "int",
+          "IDcard": "str",
+          "address": "str",
+          "age": "str",
+          "classification": "str",
+          "email": "str",
+          "identity": "str",
+          "image1": "str",
+          "image2": "str",
+          "jlugroup": "str",
+          "nickname": "str",
+          "phone": "str",
+          "qq": "str",
+          "school": "str",
+          "sex": "str",
+          "state": "str",
+          "study": "str",
+          "subjects": "str",
+          "webID": "str",
+          "wechat": "str"
+        },
+        "sample_data": "{\"ID\":403,\"IDcard\":\"https://tarsgo.xf233.com/TARSGO/person/才爽.jpeg\",\"address\":\"吉林省长春市\",\"age\":\"2020\",\"classification\":\"40200106\",\"email\":\"2376749633@qq.com\",\"identity\":\"正式队员\",\"image1\":\"\",\"image2\":\"\",\"jlugroup\":\"视觉组\",\"nickname\":\"才爽\",\"phone\":\"13039134133\",\"qq\":\"2376749633\",\"school\":\"前卫南区\",\"sex\":\"女\",\"state\":\"是\",\"study\":\"哨兵\",\"subjects\":\"人工智能\",\"webID\":\"155\",\"wechat\":\"13039134133\"}"
+      },
+      "Financial_Log": {
+        "fields": {
+          "ID": "int",
+          "campus": "str",
+          "extra_price": "float",
+          "group_name": "str",
+          "model": "str",
+          "name": "str",
+          "phone": "str",
+          "post_date": "date",
+          "price": "float",
+          "project": "str",
+          "purchase_link": "str",
+          "purchaser": "str",
+          "quantity": "int",
+          "remarks": "str",
+          "troop_type": "str",
+          "unit": "str",
+          "usage_description": "str"
+        },
+        "sample_data": "{\"ID\":222,\"campus\":\"南岭\",\"extra_price\":0,\"group_name\":\"机械\",\"model\":\"M3*12 [50只]平端\",\"name\":\"紧定螺丝\",\"phone\":\"\",\"post_date\":\"2023-09-09T15:43:24+08:00\",\"price\":4.32,\"project\":\"RM\",\"purchase_link\":\"https://detail.tmall.com/item.htm?spm=a1z10.5-b.w4011-14789417929.76.67ec10d219qj0Y\\u0026id=637707869478\\u0026rn=06cf7f0b753f9beb2bcd8338fdaf667b\\u0026abbucket=9\",\"purchaser\":\"张闫麒先\",\"quantity\":1,\"remarks\":\"\",\"troop_type\":\"英雄\",\"unit\":\"个\",\"usage_description\":\"\"}"
+      },
+      "Material_Category": {
+        "fields": {
+          "ID": "int",
+          "category": "str",
+          "is_consumable": "int",
+          "is_valuable": "int"
+        },
+        "sample_data": "{\"ID\":1,\"category\":\"未分类\",\"is_consumable\":0,\"is_valuable\":0}"
+      },
+      "Material_Inbound": {
+        "fields": {
+          "ID": "int",
+          "approver": "str",
+          "category": "int",
+          "entry_date": "date",
+          "flag": "int",
+          "item_name": "str",
+          "purpose": "int",
+          "quantity": "int",
+          "quantity_unit": "str",
+          "site": "int",
+          "stocker": "str"
+        },
+        "sample_data": "{\"ID\":1,\"approver\":\"姚秀玲\",\"category\":1,\"entry_date\":\"2023-07-14T12:29:32+08:00\",\"flag\":1,\"item_name\":\"焊锡\",\"purpose\":1,\"quantity\":100,\"quantity_unit\":\"个\",\"site\":1,\"stocker\":\"测试人员\"}"
+      },
+      "Material_Log": {
+        "fields": {
+          "ID": "int",
+          "approver": "str",
+          "category": "int",
+          "item_name": "str",
+          "operation_date": "date",
+          "operation_type": "int",
+          "operator": "str",
+          "purpose": "int",
+          "quantity": "int",
+          "quantity_unit": "str",
+          "site": "int",
+          "usage_description": "str"
+        },
+        "sample_data": "{\"ID\":9,\"approver\":\"QG\",\"category\":1,\"item_name\":\"电源线\",\"operation_date\":\"2023-08-25T15:04:43+08:00\",\"operation_type\":0,\"operator\":\"杨瑞\",\"purpose\":1,\"quantity\":200,\"quantity_unit\":\"根\",\"site\":1,\"usage_description\":\"undefined\"}"
+      },
+      "Material_Outbound": {
+        "fields": {
+          "ID": "int",
+          "approver": "str",
+          "category": "int",
+          "flag": "int",
+          "item_name": "str",
+          "outbound_date": "date",
+          "outbound_personnel": "str",
+          "purpose": "int",
+          "quantity": "int",
+          "quantity_unit": "str",
+          "site": "int",
+          "usage_description": "str"
+        },
+        "sample_data": "{\"ID\":1,\"approver\":\"邱钢\",\"category\":1,\"flag\":1,\"item_name\":\"杜邦线\",\"outbound_date\":\"2023-07-14T22:53:01+08:00\",\"outbound_personnel\":\"邱钢\",\"purpose\":1,\"quantity\":20,\"quantity_unit\":\"根\",\"site\":1,\"usage_description\":\"用于测试\"}"
+      },
+      "Material_Store": {
+        "fields": {
+          "ID": "int",
+          "category": "int",
+          "item_name": "str",
+          "purpose": "int",
+          "quantity": "int",
+          "quantity_unit": "str",
+          "site": "int"
+        },
+        "sample_data": "{\"ID\":6,\"category\":3,\"item_name\":\"锟斤拷锟斤拷\",\"purpose\":1,\"quantity\":20,\"quantity_unit\":\"糖\",\"site\":1}"
+      },
+      "Material_Usage": {
+        "fields": {
+          "ID": "int",
+          "purpose": "str"
+        },
+        "sample_data": "{\"ID\":1,\"purpose\":\"打RM比赛\"}"
+      },
+      "Material_User": {
+        "fields": {
+          "ID": "int",
+          "flag": "int",
+          "nickname": "str",
+          "password": "str",
+          "username": "str"
+        },
+        "sample_data": "{\"ID\":1,\"flag\":0,\"nickname\":\"test\",\"password\":\"test\",\"username\":\"test\"}"
+      },
+      "Material_site": {
+        "fields": {
+          "ID": "int",
+          "site": "str"
+        },
+        "sample_data": "{\"ID\":1,\"site\":\"南湖一教109\"}"
+      },
+      "SignUpData": {
+        "fields": {
+          "ID": "int",
+          "address": "str",
+          "classification": "str",
+          "email": "str",
+          "flag_one": "int",
+          "flag_two": "int",
+          "nickname": "str",
+          "phone": "str",
+          "photo": "str",
+          "qq": "str",
+          "region": "str",
+          "school": "str",
+          "sex": "str",
+          "subject": "str",
+          "text_four": "str",
+          "text_one": "str",
+          "text_three": "str",
+          "text_two": "str",
+          "type_one": "str",
+          "type_two": "str",
+          "uid": "str"
+        },
+        "sample_data": "{}"
+      },
+      "data": {
+        "fields": {
+          "IDcard": "str",
+          "address": "str",
+          "age": "int",
+          "branch": "str",
+          "campus": "str",
+          "classification": "str",
+          "created_at": "date",
+          "email": "str",
+          "gender": "str",
+          "grade": "str",
+          "group": "str",
+          "id": "int",
+          "identity": "str",
+          "jlugroup": "str",
+          "major": "str",
+          "name": "str",
+          "nickname": "str",
+          "phone": "str",
+          "qq": "str",
+          "school": "str",
+          "sex": "str",
+          "state": "str",
+          "study": "str",
+          "subjects": "str",
+          "updated_at": "date",
+          "we_chat": "str",
+          "webID": "str",
+          "wechat": "str"
+        },
+        "sample_data": "{}"
+      },
+      "members": {
+        "fields": {
+          "branch": "str",
+          "campus": "str",
+          "created_at": "date",
+          "email": "str",
+          "gender": "str",
+          "grade": "str",
+          "group": "str",
+          "id": "int",
+          "identity": "str",
+          "major": "str",
+          "name": "str",
+          "phone": "str",
+          "qq": "str",
+          "updated_at": "date",
+          "we_chat": "str"
+        },
+        "sample_data": "{}"
+      },
+      "options": {
+        "fields": {
+          "ID": "int",
+          "data": "str",
+          "flag": "str",
+          "name": "str",
+          "switch": "int"
+        },
+        "sample_data": "{\"ID\":1,\"data\":\"d588f0bb00\",\"flag\":\"{\\\"start\\\":1747324800000,\\\"end\\\":1747324800000}\",\"name\":\"SignUpConfig\",\"switch\":1}"
+      },
+      "sign_daytask": {
+        "fields": {
+          "ID": "int",
+          "identity": "str",
+          "jlugroup": "str",
+          "lasttime": "str",
+          "nickname": "str",
+          "school": "str",
+          "signin": "str",
+          "signout": "str",
+          "status": "int",
+          "totaltime": "str"
+        },
+        "sample_data": "{\"ID\":177,\"identity\":\"正式队员\",\"jlugroup\":\"电控组\",\"lasttime\":\"13小时37分\",\"nickname\":\"王瀚毅\",\"school\":\"南湖校区\",\"signin\":\"2022-10-13 08:06:51\",\"signout\":\"2022-10-13 21:44:15\",\"status\":1,\"totaltime\":\"817\"}"
+      },
+      "sign_person": {
+        "fields": {
+          "ID": "int",
+          "identity": "str",
+          "jlugroup": "str",
+          "nickname": "str",
+          "school": "str",
+          "totaltime": "str"
+        },
+        "sample_data": "{\"ID\":243,\"identity\":\"正式队员\",\"jlugroup\":\"机械组\",\"nickname\":\"常家玮\",\"school\":\"南湖校区\",\"totaltime\":\"8811\"}"
+      },
+      "tarsgo_auth": {
+        "fields": {
+          "ID": "int",
+          "level": "int",
+          "role": "str"
+        },
+        "sample_data": "{\"ID\":1,\"level\":1,\"role\":\"组长\"}"
+      },
+      "tarsgo_user": {
+        "fields": {
+          "ID": "int",
+          "group": "int",
+          "identity": "str",
+          "password": "str",
+          "status": "int",
+          "username": "str"
+        },
+        "sample_data": "{\"ID\":10,\"group\":1,\"identity\":\"AI组\",\"password\":\"e10adc3949ba59abbe56e057f20f883e\",\"status\":0,\"username\":\"ai\"}"
+      },
+      "users": {
+        "fields": {
+          "created_at": "date",
+          "deleted_at": "date",
+          "email": "str",
+          "id": "int",
+          "password": "str",
+          "updated_at": "date",
+          "username": "str"
+        },
+        "sample_data": "{}"
+      }
     },
-    "Data": {
-      "fields": {
-        "ID": "int",
-        "IDcard": "str",
-        "address": "str",
-        "age": "str",
-        "classification": "str",
-        "email": "str",
-        "identity": "str",
-        "image1": "str",
-        "image2": "str",
-        "jlugroup": "str",
-        "nickname": "str",
-        "phone": "str",
-        "qq": "str",
-        "school": "str",
-        "sex": "str",
-        "state": "str",
-        "study": "str",
-        "subjects": "str",
-        "webID": "str",
-        "wechat": "str"
-      },
-      "sample_data": "{\"ID\":403,\"IDcard\":\"https://tarsgo.xf233.com/TARSGO/person/才爽.jpeg\",\"address\":\"吉林省长春市\",\"age\":\"2020\",\"classification\":\"40200106\",\"email\":\"2376749633@qq.com\",\"identity\":\"正式队员\",\"image1\":\"\",\"image2\":\"\",\"jlugroup\":\"视觉组\",\"nickname\":\"才爽\",\"phone\":\"13039134133\",\"qq\":\"2376749633\",\"school\":\"前卫南区\",\"sex\":\"女\",\"state\":\"是\",\"study\":\"哨兵\",\"subjects\":\"人工智能\",\"webID\":\"155\",\"wechat\":\"13039134133\"}"
-    },
-    "Financial_Log": {
-      "fields": {
-        "ID": "int",
-        "campus": "str",
-        "extra_price": "float",
-        "group_name": "str",
-        "model": "str",
-        "name": "str",
-        "phone": "str",
-        "post_date": "date",
-        "price": "float",
-        "project": "str",
-        "purchase_link": "str",
-        "purchaser": "str",
-        "quantity": "int",
-        "remarks": "str",
-        "troop_type": "str",
-        "unit": "str",
-        "usage_description": "str"
-      },
-      "sample_data": "{\"ID\":222,\"campus\":\"南岭\",\"extra_price\":0,\"group_name\":\"机械\",\"model\":\"M3*12 [50只]平端\",\"name\":\"紧定螺丝\",\"phone\":\"\",\"post_date\":\"2023-09-09T15:43:24+08:00\",\"price\":4.32,\"project\":\"RM\",\"purchase_link\":\"https://detail.tmall.com/item.htm?spm=a1z10.5-b.w4011-14789417929.76.67ec10d219qj0Y\\u0026id=637707869478\\u0026rn=06cf7f0b753f9beb2bcd8338fdaf667b\\u0026abbucket=9\",\"purchaser\":\"张闫麒先\",\"quantity\":1,\"remarks\":\"\",\"troop_type\":\"英雄\",\"unit\":\"个\",\"usage_description\":\"\"}"
-    },
-    "Material_Category": {
-      "fields": {
-        "ID": "int",
-        "category": "str",
-        "is_consumable": "int",
-        "is_valuable": "int"
-      },
-      "sample_data": "{\"ID\":1,\"category\":\"未分类\",\"is_consumable\":0,\"is_valuable\":0}"
-    },
-    "Material_Inbound": {
-      "fields": {
-        "ID": "int",
-        "approver": "str",
-        "category": "int",
-        "entry_date": "date",
-        "flag": "int",
-        "item_name": "str",
-        "purpose": "int",
-        "quantity": "int",
-        "quantity_unit": "str",
-        "site": "int",
-        "stocker": "str"
-      },
-      "sample_data": "{\"ID\":1,\"approver\":\"姚秀玲\",\"category\":1,\"entry_date\":\"2023-07-14T12:29:32+08:00\",\"flag\":1,\"item_name\":\"焊锡\",\"purpose\":1,\"quantity\":100,\"quantity_unit\":\"个\",\"site\":1,\"stocker\":\"测试人员\"}"
-    },
-    "Material_Log": {
-      "fields": {
-        "ID": "int",
-        "approver": "str",
-        "category": "int",
-        "item_name": "str",
-        "operation_date": "date",
-        "operation_type": "int",
-        "operator": "str",
-        "purpose": "int",
-        "quantity": "int",
-        "quantity_unit": "str",
-        "site": "int",
-        "usage_description": "str"
-      },
-      "sample_data": "{\"ID\":9,\"approver\":\"QG\",\"category\":1,\"item_name\":\"电源线\",\"operation_date\":\"2023-08-25T15:04:43+08:00\",\"operation_type\":0,\"operator\":\"杨瑞\",\"purpose\":1,\"quantity\":200,\"quantity_unit\":\"根\",\"site\":1,\"usage_description\":\"undefined\"}"
-    },
-    "Material_Outbound": {
-      "fields": {
-        "ID": "int",
-        "approver": "str",
-        "category": "int",
-        "flag": "int",
-        "item_name": "str",
-        "outbound_date": "date",
-        "outbound_personnel": "str",
-        "purpose": "int",
-        "quantity": "int",
-        "quantity_unit": "str",
-        "site": "int",
-        "usage_description": "str"
-      },
-      "sample_data": "{\"ID\":1,\"approver\":\"邱钢\",\"category\":1,\"flag\":1,\"item_name\":\"杜邦线\",\"outbound_date\":\"2023-07-14T22:53:01+08:00\",\"outbound_personnel\":\"邱钢\",\"purpose\":1,\"quantity\":20,\"quantity_unit\":\"根\",\"site\":1,\"usage_description\":\"用于测试\"}"
-    },
-    "Material_Store": {
-      "fields": {
-        "ID": "int",
-        "category": "int",
-        "item_name": "str",
-        "purpose": "int",
-        "quantity": "int",
-        "quantity_unit": "str",
-        "site": "int"
-      },
-      "sample_data": "{\"ID\":6,\"category\":3,\"item_name\":\"锟斤拷锟斤拷\",\"purpose\":1,\"quantity\":20,\"quantity_unit\":\"糖\",\"site\":1}"
-    },
-    "Material_Usage": {
-      "fields": {
-        "ID": "int",
-        "purpose": "str"
-      },
-      "sample_data": "{\"ID\":1,\"purpose\":\"打RM比赛\"}"
-    },
-    "Material_User": {
-      "fields": {
-        "ID": "int",
-        "flag": "int",
-        "nickname": "str",
-        "password": "str",
-        "username": "str"
-      },
-      "sample_data": "{\"ID\":1,\"flag\":0,\"nickname\":\"test\",\"password\":\"test\",\"username\":\"test\"}"
-    },
-    "Material_site": {
-      "fields": {
-        "ID": "int",
-        "site": "str"
-      },
-      "sample_data": "{\"ID\":1,\"site\":\"南湖一教109\"}"
-    },
-    "SignUpData": {
-      "fields": {
-        "ID": "int",
-        "address": "str",
-        "classification": "str",
-        "email": "str",
-        "flag_one": "int",
-        "flag_two": "int",
-        "nickname": "str",
-        "phone": "str",
-        "photo": "str",
-        "qq": "str",
-        "region": "str",
-        "school": "str",
-        "sex": "str",
-        "subject": "str",
-        "text_four": "str",
-        "text_one": "str",
-        "text_three": "str",
-        "text_two": "str",
-        "type_one": "str",
-        "type_two": "str",
-        "uid": "str"
-      },
-      "sample_data": "{\"ID\":1,\"address\":\"江苏省丰县\",\"classification\":\"2024\",\"email\":\"m15714940532@163.com\",\"flag_one\":1,\"flag_two\":1,\"nickname\":\"李香怡\",\"phone\":\"15714940532\",\"photo\":\"https://tarsgo.xf233.com/tarsgo_cloud_service/upload/Registration/1726968347594_3674915940.jpg\",\"qq\":\"2941925465\",\"region\":\"南湖校区\",\"school\":\"通信工程学院\",\"sex\":\"女\",\"subject\":\"通信工程\",\"text_four\":\"首先吉甲大师是一个极好的能培养学生综合能力的大型平台。它在2018.12建立，是个双创实建基地，目前在南湖南岭中心校区均有发展。内容涉及文理工，综合性极强。\\n吉甲大师社团是一个学习氛围浓厚的圈子。一说选拔制度，经过层层选拔留下的人都会有所共通性，能有热爱吉甲，在事物上精益求精做到极致，认真负责，专心致志的精神，这让一群有共同梦想，有团队神的人聚在了一起。二说吉甲负责项目，吉甲负责Robomaster以及其他竞赛项目，会设计出产业所需的产品，这意味着学生将有更多机会经历项目式培养，能更好的锻炼自身综合能力。\",\"text_one\":\"我是李香怡，来自新疆阿克苏。是一个性格外向，永远不缺乏向上生命力的女孩子，一般精力都比较充沛。在平常我喜欢看些书，多是理论逻辑类的，比如刘润的底层逻辑，认知天性，被讨厌的勇气等，也看稍涉猎文学，比较喜欢的是张爱玲和李娟的作品。\",\"text_three\":\"首先我是希望可以我的专业知识奉献一些让吉甲越来越好，其次我希望可以有机会交到志同道合的好友一起度过大学四年。最后我希望可以提高自己各种通识能力。\",\"text_two\":\"我来参加吉甲大师。一是希望可以能够贡献自己的一份价值，让自己的青春多彩一点。二是为了提高自己的专业能力，把自己学的知识学以致用。另外也是想要继续提升自己个人的沟通能力，组织能力，策划能力等，继续精进自我。\",\"type_one\":\"视觉组\",\"type_two\":\"运营组\",\"uid\":\"20241907\"}"
-    },
-    "data": {
-      "fields": {
-        "IDcard": "str",
-        "address": "str",
-        "age": "int",
-        "branch": "str",
-        "campus": "str",
-        "classification": "str",
-        "created_at": "date",
-        "email": "str",
-        "gender": "str",
-        "grade": "str",
-        "group": "str",
-        "id": "int",
-        "identity": "str",
-        "jlugroup": "str",
-        "major": "str",
-        "name": "str",
-        "nickname": "str",
-        "phone": "str",
-        "qq": "str",
-        "school": "str",
-        "sex": "str",
-        "state": "str",
-        "study": "str",
-        "subjects": "str",
-        "updated_at": "date",
-        "we_chat": "str",
-        "webID": "str",
-        "wechat": "str"
-      },
-      "sample_data": "{}"
-    },
-    "members": {
-      "fields": {
-        "branch": "str",
-        "campus": "str",
-        "created_at": "date",
-        "email": "str",
-        "gender": "str",
-        "grade": "str",
-        "group": "str",
-        "id": "int",
-        "identity": "str",
-        "major": "str",
-        "name": "str",
-        "phone": "str",
-        "qq": "str",
-        "updated_at": "date",
-        "we_chat": "str"
-      },
-      "sample_data": "{}"
-    },
-    "options": {
-      "fields": {
-        "ID": "int",
-        "data": "str",
-        "flag": "str",
-        "name": "str",
-        "switch": "int"
-      },
-      "sample_data": "{\"ID\":1,\"data\":\"73bfa31706\",\"flag\":\"{\\\"start\\\":1724860800000,\\\"end\\\":1727452800000}\",\"name\":\"SignUpConfig\",\"switch\":1}"
-    },
-    "sign_daytask": {
-      "fields": {
-        "ID": "int",
-        "identity": "str",
-        "jlugroup": "str",
-        "lasttime": "str",
-        "nickname": "str",
-        "school": "str",
-        "signin": "str",
-        "signout": "str",
-        "status": "int",
-        "totaltime": "str"
-      },
-      "sample_data": "{\"ID\":177,\"identity\":\"正式队员\",\"jlugroup\":\"电控组\",\"lasttime\":\"13小时37分\",\"nickname\":\"王瀚毅\",\"school\":\"南湖校区\",\"signin\":\"2022-10-13 08:06:51\",\"signout\":\"2022-10-13 21:44:15\",\"status\":1,\"totaltime\":\"817\"}"
-    },
-    "sign_person": {
-      "fields": {
-        "ID": "int",
-        "identity": "str",
-        "jlugroup": "str",
-        "nickname": "str",
-        "school": "str",
-        "totaltime": "str"
-      },
-      "sample_data": "{\"ID\":243,\"identity\":\"正式队员\",\"jlugroup\":\"机械组\",\"nickname\":\"常家玮\",\"school\":\"南湖校区\",\"totaltime\":\"8811\"}"
-    },
-    "tarsgo_auth": {
-      "fields": {
-        "ID": "int",
-        "level": "int",
-        "role": "str"
-      },
-      "sample_data": "{\"ID\":1,\"level\":1,\"role\":\"组长\"}"
-    },
-    "tarsgo_user": {
-      "fields": {
-        "ID": "int",
-        "group": "int",
-        "identity": "str",
-        "password": "str",
-        "status": "int",
-        "username": "str"
-      },
-      "sample_data": "{\"ID\":10,\"group\":1,\"identity\":\"AI组\",\"password\":\"e10adc3949ba59abbe56e057f20f883e\",\"status\":0,\"username\":\"ai\"}"
-    },
-    "users": {
-      "fields": {
-        "created_at": "date",
-        "deleted_at": "date",
-        "email": "str",
-        "id": "int",
-        "password": "str",
-        "updated_at": "date",
-        "username": "str"
-      },
-      "sample_data": "{}"
-    }
+    "username": "tarsgo"
   }
 }

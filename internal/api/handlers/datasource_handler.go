@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +22,29 @@ import (
 
 // DataSourceHandler 处理数据源相关请求
 type DataSourceHandler struct {
+}
+
+// EncryptPassword 使用XOR加密密码并返回十六进制字符串
+func EncryptPassword(password, key string) string {
+	encrypted := make([]byte, len(password))
+	for i := 0; i < len(password); i++ {
+		encrypted[i] = password[i] ^ key[i%len(key)]
+	}
+	return hex.EncodeToString(encrypted)
+}
+
+// DecryptPassword 解密密码
+func DecryptPassword(cipherHex, key string) (string, error) {
+	cipher, err := hex.DecodeString(cipherHex)
+	if err != nil {
+		return "", err
+	}
+
+	decrypted := make([]byte, len(cipher))
+	for i := 0; i < len(cipher); i++ {
+		decrypted[i] = cipher[i] ^ key[i%len(key)]
+	}
+	return string(decrypted), nil
 }
 
 // NewDataSourceHandler 创建新的数据源处理器
@@ -484,7 +507,7 @@ func (h *DataSourceHandler) ImportCSVToMongoDB(c *gin.Context) {
 			if err != nil {
 				log.Printf("警告: 无法序列化配置数据: %v", err)
 			} else {
-				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+				if err := os.WriteFile(configPath, configData, 0644); err != nil {
 					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
 				} else {
 					log.Printf("已将配置信息保存到: %s", configPath)
@@ -642,12 +665,13 @@ func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
 		if err := os.MkdirAll(dataDir, 0755); err != nil {
 			log.Printf("警告: 无法创建data目录: %v", err)
 		} else {
-			// 将配置信息保存到config.json
-			configData, err := json.MarshalIndent(connInfo, "", "  ")
+			// 将配置信息保存到config.json，外层包裹{"mysql": ...}
+			wrapped := map[string]interface{}{"mysql": connInfo}
+			configData, err := json.MarshalIndent(wrapped, "", "  ")
 			if err != nil {
 				log.Printf("警告: 无法序列化配置数据: %v", err)
 			} else {
-				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+				if err := os.WriteFile(configPath, configData, 0644); err != nil {
 					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
 				} else {
 					log.Printf("已将配置信息保存到: %s", configPath)
@@ -656,8 +680,10 @@ func (h *DataSourceHandler) ConnectToMongoDB(c *gin.Context) {
 		}
 	}
 
-	// 直接返回连接信息，不包含success和connectionInfo包装
-	c.JSON(http.StatusOK, connInfo)
+	// 直接返回连接信息，外层包裹{"mysql": ...}
+	c.JSON(http.StatusOK, gin.H{
+		"mysql": connInfo,
+	})
 }
 
 // ConnectToMySQL 处理MySQL连接请求
@@ -726,6 +752,31 @@ ProcessRequest:
 		return
 	}
 
+	// 对密码进行加密，使用固定密钥"TokugawaMatsuri"
+	encryptedPassword := ""
+	if request.Password != "" {
+		encryptedPassword = EncryptPassword(request.Password, "TokugawaMatsuri")
+	}
+
+	// 将结构体转换为map以便操作和包装
+	connInfoMap := map[string]interface{}{
+		"host":     request.Host,
+		"port":     request.Port,
+		"username": request.Username,
+		"database": request.Database,
+		"tables":   connInfo.Tables,
+	}
+
+	// 添加加密后的密码
+	if encryptedPassword != "" {
+		connInfoMap["password"] = encryptedPassword
+	}
+
+	// 将连接信息包装到mysql对象中
+	wrappedConnInfo := map[string]interface{}{
+		"mysql": connInfoMap,
+	}
+
 	// 获取当前工作目录
 	wd, err := os.Getwd()
 	if err != nil {
@@ -739,12 +790,12 @@ ProcessRequest:
 		if err := os.MkdirAll(dataDir, 0755); err != nil {
 			log.Printf("警告: 无法创建data目录: %v", err)
 		} else {
-			// 将配置信息保存到config.json
-			configData, err := json.MarshalIndent(connInfo, "", "  ")
+			// 将配置信息保存到config.json (包含mysql外层包装)
+			configData, err := json.MarshalIndent(wrappedConnInfo, "", "  ")
 			if err != nil {
 				log.Printf("警告: 无法序列化配置数据: %v", err)
 			} else {
-				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+				if err := os.WriteFile(configPath, configData, 0644); err != nil {
 					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
 				} else {
 					log.Printf("已将配置信息保存到: %s", configPath)
@@ -753,8 +804,8 @@ ProcessRequest:
 		}
 	}
 
-	// 直接返回连接信息，不包含success和connectionInfo包装
-	c.JSON(http.StatusOK, connInfo)
+	// 直接返回包装后的连接信息
+	c.JSON(http.StatusOK, wrappedConnInfo)
 }
 
 // ProcessSQLiteFile 处理本地SQLite文件
@@ -831,7 +882,7 @@ func (h *DataSourceHandler) ProcessSQLiteFile(c *gin.Context) {
 			if err != nil {
 				log.Printf("警告: 无法序列化配置数据: %v", err)
 			} else {
-				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+				if err := os.WriteFile(configPath, configData, 0644); err != nil {
 					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
 				} else {
 					log.Printf("已将配置信息保存到: %s", configPath)
@@ -935,7 +986,7 @@ func (h *DataSourceHandler) ImportSQLiteToMongoDB(c *gin.Context) {
 			if err != nil {
 				log.Printf("警告: 无法序列化配置数据: %v", err)
 			} else {
-				if err := ioutil.WriteFile(configPath, configData, 0644); err != nil {
+				if err := os.WriteFile(configPath, configData, 0644); err != nil {
 					log.Printf("警告: 无法保存配置到 %s: %v", configPath, err)
 				} else {
 					log.Printf("已将配置信息保存到: %s", configPath)
